@@ -102,3 +102,28 @@ def test_bearing_northwest_far():
     v = velocity.Velocity(100, bearing)
     assert v.xVelocity < 0
     assert v.yVelocity < 0
+
+def test_ordering():
+    c1 = coord.Coord(5, 50)
+    c2 = coord.Coord(6, 27)
+    c3 = coord.Coord(6, 28)
+    c4 = coord.Coord(6, 28)
+
+    assert c1 < c2
+    assert c2 > c1
+    assert c1 != c2
+    assert c2 != c1
+    assert not (c1 == c2)
+    assert not (c2 == c1)
+
+    assert c2 < c3
+    assert c3 > c2
+    assert c2 != c3
+    assert c3 != c2
+    assert not (c2 == c3)
+    assert not (c3 == c2)
+
+    assert c1 < c3
+    assert c3 > c1
+    assert c3 == c3
+    assert not (c3 != c3)

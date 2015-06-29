@@ -8,6 +8,7 @@ from . import (
     bullet,
     coord,
     gamestate,
+    grid,
     monster,
     tower,
     velocity,
@@ -28,8 +29,12 @@ def main(args=None):
     clock = pygame.time.Clock()
 
     gs = gamestate.GameState()
+    g = grid.Grid(gs)
+
     t = tower.Tower(bullet.Bullet)
     gs.add_tower(t)
+
+    print("path: {}".format(g.path(g.spawn_origin, g.base)))
 
     ticks = 0
 
@@ -43,7 +48,8 @@ def main(args=None):
                 if event.key in [pygame.K_q, pygame.K_ESCAPE]:
                     running = False
                 elif event.key in [pygame.K_m]:
-                    gs.spawn_monster()
+                    m = gs.spawn_monster()
+                    m.update_path(gs.grid)
             elif event.type == pygame.MOUSEBUTTONUP:
                 click = coord.Coord(event.pos[0], event.pos[1])
                 bearing = t.center.bearing(click)

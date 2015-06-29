@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import functools
 import math
 
 # N.B. pygame coordinate system has origin in the upper-left, so these
@@ -14,10 +15,38 @@ SOUTH = math.pi * 0.5
 SOUTHEAST = math.pi * 0.25
 
 
+@functools.total_ordering
 class Coord:
     def __init__(self, x, y):
         self.x = x
         self.y = y
+
+    def __eq__(self, rhs):
+        if isinstance(rhs, Coord):
+            return (self.x == rhs.x and
+                    self.y == rhs.y)
+        return NotImplemented
+
+    def __lt__(self, rhs):
+        if isinstance(rhs, Coord):
+            if self.x == rhs.x:
+                return self.y < rhs.y
+            else:
+                return self.x < rhs.x
+        return NotImplemented
+
+    def __cmp__(self, rhs):
+        if self.x != rhs.x:
+            return self.x - rhs.x
+        else:
+            return self.y - rhs.y
+
+    def __hash__(self):
+        # XXX - assuming x and y fit into 16b
+        return (self.x << 16) | self.y
+
+    def __repr__(self):
+        return '({}, {})'.format(self.x, self.y)
 
     def __str__(self):
         return '({}, {})'.format(self.x, self.y)
@@ -106,3 +135,15 @@ class Coord:
             return Coord(x, y)
         else:
             return Coord(r.x, r.y)
+
+    def east(self):
+        return Coord(self.x + 1, self.y)
+
+    def south(self):
+        return Coord(self.x, self.y + 1)
+
+    def west(self):
+        return Coord(self.x - 1, self.y)
+
+    def north(self):
+        return Coord(self.x, self.y - 1)

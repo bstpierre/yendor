@@ -11,6 +11,7 @@ class GameState:
         self.bullets = pygame.sprite.Group()
         self.monsters = pygame.sprite.Group()
         self.towers = pygame.sprite.Group()
+        self.grid = None
 
     @property
     def rect(self):
@@ -18,6 +19,9 @@ class GameState:
         r.x = self.coord.x
         r.y = self.coord.y
         return r
+
+    def set_grid(self, g):
+        self.grid = g
 
     def update(self, ticks):
         self.ticks = ticks
@@ -57,9 +61,13 @@ class GameState:
 
     def add_tower(self, t):
         self.towers.add(t)
+        if self.grid is not None:
+            self.grid.add_obstacle(t)
 
     def spawn_monster(self):
-        self.add_monster(monster.Monster())
+        m = monster.Monster()
+        self.add_monster(m)
+        return m
 
     def draw(self, screen):
         self.bullets.draw(screen)
