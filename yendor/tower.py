@@ -34,7 +34,5 @@ class Tower(pygame.sprite.Sprite):
         tc = self.center
         bearing = tc.bearing(mc)
         v = velocity.Velocity(speed=20, direction=bearing)
-        b = self.bullet_factory(v)
-        b.rect.x = tc.x
-        b.rect.y = tc.y
+        b = self.bullet_factory(velocity=v, coord=tc)
         return b

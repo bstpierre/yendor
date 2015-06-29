@@ -33,7 +33,9 @@ def main(args=None):
     towers.add(t)
 
     monsters = pygame.sprite.Group()
-    monsters.add(monster.Monster())
+
+    def spawn_monster():
+        monsters.add(monster.Monster())
 
     ticks = 0
 
@@ -46,12 +48,14 @@ def main(args=None):
             elif event.type == pygame.KEYDOWN:
                 if event.key in [pygame.K_q, pygame.K_ESCAPE]:
                     running = False
+                elif event.key in [pygame.K_m]:
+                    spawn_monster()
             elif event.type == pygame.MOUSEBUTTONUP:
                 click = coord.Coord(event.pos[0], event.pos[1])
                 bearing = t.center.bearing(click)
                 print(bearing)
                 v = velocity.Velocity(3, bearing)
-                b = bullet.Bullet(v)
+                b = bullet.Bullet(v, t.center)
                 b.rect.x = t.center.x
                 b.rect.y = t.center.y
                 bullets.add(b)
