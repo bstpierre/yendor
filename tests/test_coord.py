@@ -5,6 +5,7 @@ import math
 import pytest
 
 from yendor import coord
+from yendor import velocity
 
 EAST = 0
 NORTHEAST = math.pi / 4.0
@@ -18,51 +19,86 @@ SOUTHEAST = (7.0 * math.pi) / 4.0
 def test_bearing_same():
     c = coord.Coord(0, 0)
     assert c.bearing(c) == coord.EAST
+    v = velocity.Velocity(100, c.bearing(c))
+    assert v.xVelocity == 100
+    assert v.yVelocity == 0
 
 def test_bearing_east():
     c = coord.Coord(0, 0)
     east = coord.Coord(1, 0)
     assert c.bearing(east) == coord.EAST
     assert east.bearing(c) == coord.WEST
+    v = velocity.Velocity(100, c.bearing(east))
+    assert v.xVelocity == 100
+    assert v.yVelocity == 0
 
 def test_bearing_northeast():
     c = coord.Coord(0, 0)
     northeast = coord.Coord(1, -1)
     assert c.bearing(northeast) == coord.NORTHEAST
     assert northeast.bearing(c) == coord.SOUTHWEST
+    v = velocity.Velocity(100, c.bearing(northeast))
+    assert v.xVelocity > 0
+    assert v.yVelocity < 0
 
 def test_bearing_north():
     c = coord.Coord(2, 2)
     north = coord.Coord(2, 1)
     assert c.bearing(north) == coord.NORTH
     assert north.bearing(c) == coord.SOUTH
+    v = velocity.Velocity(100, c.bearing(north))
+    assert 1e-9 > abs(v.xVelocity)
+    assert v.yVelocity == -100
 
 def test_bearing_northwest():
     c = coord.Coord(0, 0)
-    northwest = coord.Coord(-1, 1)
+    northwest = coord.Coord(-1, -1)
     assert c.bearing(northwest) == coord.NORTHWEST
     assert northwest.bearing(c) == coord.SOUTHEAST
+    v = velocity.Velocity(100, c.bearing(northwest))
+    assert v.xVelocity < -70
+    assert v.yVelocity < -70
 
 def test_bearing_west():
     c = coord.Coord(0, 0)
     west = coord.Coord(-1, 0)
     assert c.bearing(west) == coord.WEST
     assert west.bearing(c) == coord.EAST
+    v = velocity.Velocity(100, c.bearing(west))
+    assert v.xVelocity == -100
+    assert 1e-9 > abs(v.yVelocity)
 
 def test_bearing_southwest():
     c = coord.Coord(0, 0)
-    southwest = coord.Coord(-1, -1)
+    southwest = coord.Coord(-1, 1)
     assert c.bearing(southwest) == coord.SOUTHWEST
     assert southwest.bearing(c) == coord.NORTHEAST
+    v = velocity.Velocity(100, c.bearing(southwest))
+    assert v.xVelocity < -70
+    assert v.yVelocity > 70
 
 def test_bearing_south():
     c = coord.Coord(0, 0)
-    south = coord.Coord(0, -1)
+    south = coord.Coord(0, 1)
     assert c.bearing(south) == coord.SOUTH
     assert south.bearing(c) == coord.NORTH
+    v = velocity.Velocity(100, c.bearing(south))
+    assert 1e-9 > abs(v.xVelocity)
+    assert v.yVelocity == 100
 
 def test_bearing_southeast():
     c = coord.Coord(0, 0)
-    southeast = coord.Coord(1, -1)
+    southeast = coord.Coord(1, 1)
     assert c.bearing(southeast) == coord.SOUTHEAST
     assert southeast.bearing(c) == coord.NORTHWEST
+    v = velocity.Velocity(100, c.bearing(southeast))
+    assert v.xVelocity > 70
+    assert v.yVelocity > 70
+
+def test_bearing_northwest_far():
+    tower = coord.Coord(208.0, 216.0)
+    monster = coord.Coord(162.0, 166.0)
+    bearing = tower.bearing(monster)
+    v = velocity.Velocity(100, bearing)
+    assert v.xVelocity < 0
+    assert v.yVelocity < 0

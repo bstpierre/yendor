@@ -33,7 +33,7 @@ def main(args=None):
     towers.add(t)
 
     monsters = pygame.sprite.Group()
-#    monsters.add(monster.Monster())
+    monsters.add(monster.Monster())
 
     ticks = 0
 
@@ -79,8 +79,8 @@ def main(args=None):
             if not t.loaded:
                 continue
             for m in ms:
-                #b = t.fire(m, ticks)
-                #bullets.add(b)
+                b = t.fire(m, ticks)
+                bullets.add(b)
                 # XXX tower only fires at one monster
                 break
 

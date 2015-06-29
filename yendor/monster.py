@@ -10,6 +10,7 @@ class Monster(pygame.sprite.Sprite):
         super().__init__()
         self.image = pygame.image.load("assets/dwarf-sm.png").convert()
         self.rect = self.image.get_rect()
+        self.rect.x = 150
         self.radius = self.rect.width
         self.health = 1000
 
