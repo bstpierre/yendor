@@ -33,9 +33,7 @@ class Tower(pygame.sprite.Sprite):
         mc = monster.center
         tc = self.center
         bearing = tc.bearing(mc)
-        v = velocity.Velocity(bearing, 5)
-        print("firing at monster bearing {} ({})".format(
-            bearing, v))
+        v = velocity.Velocity(speed=20, direction=bearing)
         b = self.bullet_factory(v)
         b.rect.x = tc.x
         b.rect.y = tc.y
