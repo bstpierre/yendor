@@ -1,10 +1,12 @@
 #!/usr/bin/python
 
+import pygame
+
 from . import coord
 
 
-GRID_WIDTH = 320
-GRID_HEIGHT = 320
+GRID_WIDTH = 480
+GRID_HEIGHT = 480
 
 BASE_WIDTH = 32
 BASE_HEIGHT = 32
@@ -15,7 +17,7 @@ class Grid:
         self.gs = gs
         self.gs.set_grid(self)
 
-        self.cell_size = 20 # each grid cell occupies X*Y pixels
+        self.cell_size = 32 # each grid cell occupies X*Y pixels
         self.cols = GRID_WIDTH / self.cell_size
         self.rows = GRID_HEIGHT / self.cell_size
         self.obstacles = set()
@@ -30,8 +32,9 @@ class Grid:
         RED = (255, 0, 0)
 
         # Draw the Yendorian base.
-        self.image = pygame.Surface([32, 32])
-        self.image.fill(RED)
+        base_cc = self.grid_coord_to_client(self.base)
+        pygame.draw.rect(screen, RED, [base_cc.x, base_cc.y,
+                                       self.cell_size, self.cell_size])
 
     def passable(self, c):
         """Return true if there are no obstacles at the given
@@ -63,12 +66,12 @@ class Grid:
 
         # Will remove this below if it can't be placed here without
         # blocking paths.
-        self.obstacles.add(obs)
+        self.obstacles.add(tower_gc)
 
         for loc in locs:
             path = self.path(loc, self.base)
             if len(path) == 0:
-                self.towers.pop()
+                self.obstacles.remove(tower_gc)
                 print("Can't place tower to block path")
                 return False
 
@@ -93,6 +96,12 @@ class Grid:
         x = int(c.x / self.cell_size)
         y = int(c.y / self.cell_size)
         return coord.Coord(x, y)
+
+    def client_coord_aligned(self, c):
+        """Given a client-based Coord, return a client-based Coord
+        that aligns to a grid-based Coord."""
+        gc = self.client_coord_to_grid(c)
+        return self.grid_coord_to_client(gc)
 
     def in_bounds(self, gc):
         return (gc.x >= 0 and
@@ -137,7 +146,7 @@ class Grid:
         # Return the shortest path.
         path = []
 
-        current = came_from[finish]
+        current = came_from.get(finish)
         while current is not None:
             path.insert(0, current)
             current = came_from[current]

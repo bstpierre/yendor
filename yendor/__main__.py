@@ -31,12 +31,9 @@ def main(args=None):
     gs = gamestate.GameState()
     g = grid.Grid(gs)
 
-    t = tower.Tower(bullet.Bullet)
-    gs.add_tower(t)
-
-    print("path: {}".format(g.path(g.spawn_origin, g.base)))
-
     ticks = 0
+    placing_group = pygame.sprite.Group()
+    placing_tower = None
 
     pygame.init()
     running = True
@@ -50,15 +47,29 @@ def main(args=None):
                 elif event.key in [pygame.K_m]:
                     m = gs.spawn_monster()
                     m.update_path(gs.grid)
-            elif event.type == pygame.MOUSEBUTTONUP:
-                click = coord.Coord(event.pos[0], event.pos[1])
-                bearing = t.center.bearing(click)
-                print(bearing)
-                v = velocity.Velocity(3, bearing)
-                b = bullet.Bullet(v, t.center)
-                b.rect.x = t.center.x
-                b.rect.y = t.center.y
-                gs.add_bullet(b)
+                elif event.key in [pygame.K_t]:
+                    if placing_tower is None:
+                        placing_tower = tower.Tower(bullet.Bullet)
+                        pos = pygame.mouse.get_pos()
+                        cc = coord.Coord(pos[0], pos[1])
+                        aligned = gs.grid.client_coord_aligned(cc)
+                        placing_tower.rect.x = aligned.x
+                        placing_tower.rect.y = aligned.y
+                        placing_group.add(placing_tower)
+                    else:
+                        placing_tower.kill()
+                        placing_tower = None
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if placing_tower is not None:
+                    gs.add_tower(placing_tower)
+                    placing_group.empty()
+                    placing_tower = None
+            elif event.type == pygame.MOUSEMOTION:
+                if placing_tower is not None:
+                    cc = coord.Coord(event.pos[0], event.pos[1])
+                    aligned = gs.grid.client_coord_aligned(cc)
+                    placing_tower.rect.x = aligned.x
+                    placing_tower.rect.y = aligned.y
 
         ticks += 1
         gs.update(ticks)
@@ -68,6 +79,7 @@ def main(args=None):
 
         screen.fill(WHITE)
         gs.draw(screen)
+        placing_group.draw(screen)
         pygame.display.flip()
 
     pygame.quit()

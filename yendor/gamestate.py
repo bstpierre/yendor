@@ -60,9 +60,9 @@ class GameState:
         self.monsters.add(m)
 
     def add_tower(self, t):
-        self.towers.add(t)
         if self.grid is not None:
-            self.grid.add_obstacle(t)
+            if self.grid.add_obstacle(t):
+                self.towers.add(t)
 
     def spawn_monster(self):
         m = monster.Monster()
@@ -70,6 +70,7 @@ class GameState:
         return m
 
     def draw(self, screen):
+        self.grid.draw(screen)
         self.bullets.draw(screen)
         self.monsters.draw(screen)
         self.towers.draw(screen)

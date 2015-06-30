@@ -13,7 +13,7 @@ class Bullet(pygame.sprite.Sprite):
         self.image.fill((200, 0, 0))
         self.coord = coord
         self.radius = self.rect.width
-        self.damage = 20
+        self.damage = 1
 
     def update(self, dt):
         self.coord.x += self.velocity.xVelocity

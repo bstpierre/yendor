@@ -32,6 +32,8 @@ def test_bearing_east():
     assert v.xVelocity == 100
     assert v.yVelocity == 0
 
+    assert c.bearing(c.east()) == coord.EAST
+
 def test_bearing_northeast():
     c = coord.Coord(0, 0)
     northeast = coord.Coord(1, -1)
@@ -49,6 +51,8 @@ def test_bearing_north():
     v = velocity.Velocity(100, c.bearing(north))
     assert 1e-9 > abs(v.xVelocity)
     assert v.yVelocity == -100
+
+    assert c.bearing(c.north()) == coord.NORTH
 
 def test_bearing_northwest():
     c = coord.Coord(0, 0)
@@ -68,6 +72,8 @@ def test_bearing_west():
     assert v.xVelocity == -100
     assert 1e-9 > abs(v.yVelocity)
 
+    assert c.bearing(c.west()) == coord.WEST
+
 def test_bearing_southwest():
     c = coord.Coord(0, 0)
     southwest = coord.Coord(-1, 1)
@@ -85,6 +91,8 @@ def test_bearing_south():
     v = velocity.Velocity(100, c.bearing(south))
     assert 1e-9 > abs(v.xVelocity)
     assert v.yVelocity == 100
+
+    assert c.bearing(c.south()) == coord.SOUTH
 
 def test_bearing_southeast():
     c = coord.Coord(0, 0)
@@ -127,3 +135,10 @@ def test_ordering():
     assert c3 > c1
     assert c3 == c3
     assert not (c3 != c3)
+
+    with pytest.raises(TypeError):
+        c1 < 5
+    assert not (c1 == 5)
+    assert (c1 != 5)
+    assert not (c1 == 50)
+    assert not (c1 == (5, 50))

@@ -35,12 +35,6 @@ class Coord:
                 return self.x < rhs.x
         return NotImplemented
 
-    def __cmp__(self, rhs):
-        if self.x != rhs.x:
-            return self.x - rhs.x
-        else:
-            return self.y - rhs.y
-
     def __hash__(self):
         # XXX - assuming x and y fit into 16b
         return (self.x << 16) | self.y
