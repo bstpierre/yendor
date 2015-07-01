@@ -18,7 +18,7 @@ class Monster(pygame.sprite.Sprite):
         self.health = 1000
         self.path = []
         self.grid = None
-        self.coord = coord.Coord(200, 0) # XXX
+        self.coord = coord.Coord(256, 0) # XXX
         self.velocity = velocity.Velocity(1, coord.SOUTH) # XXX
 
     @property
@@ -36,33 +36,34 @@ class Monster(pygame.sprite.Sprite):
     def _head_to_goal(self):
         assert len(self.path) > 0
         assert self.grid is not None
-        goal = self.path[0]
-        my_gc = self.grid.client_coord_to_grid(self.center)
-        bearing = my_gc.bearing(goal)
+        goal_cc = self.grid.grid_coord_to_client(self.path[0])
+        bearing = self.coord.bearing(goal_cc)
         self.velocity = velocity.Velocity(speed=1, direction=bearing)
 
     def update(self, dt):
         self.coord.x += self.velocity.xVelocity
         self.coord.y += self.velocity.yVelocity
-        my_gc = self.grid.client_coord_to_grid(self.center)
         if len(self.path) == 0:
             print("SMASH BASE (via update)")
             self.kill()
+            return
         else:
             goal = self.path[0]
-            if my_gc == goal:
+            goal_cc = self.grid.grid_coord_to_client(self.path[0])
+            mc_round = coord.Coord(int(self.coord.x),
+                                   int(self.coord.y))
+            if mc_round.distance(goal_cc) < 2: # XXX
                 self.path.pop(0)
                 if len(self.path) == 0:
                     print("SMASH BASE (update2)")
                     self.kill()
-                else:
-                    self._head_to_goal()
+                    return
+        self._head_to_goal()
 
     def update_path(self, grid):
         self.grid = grid
         my_gc = grid.client_coord_to_grid(self.center)
         self.path = grid.path(my_gc, grid.base)
-        print("my_gc {}, path {}".format(my_gc, self.path))
         if self.path:
             assert my_gc == self.path[0]
             self.path.pop(0)
@@ -75,6 +76,5 @@ class Monster(pygame.sprite.Sprite):
 
     def injure(self, damage):
         self.health -= damage
-        print("ow", self.health)
         if self.health <= 0:
             self.kill()

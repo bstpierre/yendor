@@ -11,6 +11,7 @@ class GameState:
         self.bullets = pygame.sprite.Group()
         self.monsters = pygame.sprite.Group()
         self.towers = pygame.sprite.Group()
+        self.clickables = pygame.sprite.Group()
         self.grid = None
 
     @property
@@ -58,11 +59,13 @@ class GameState:
 
     def add_monster(self, m):
         self.monsters.add(m)
+        self.clickables.add(m)
 
     def add_tower(self, t):
         if self.grid is not None:
             if self.grid.add_obstacle(t):
                 self.towers.add(t)
+                self.clickables.add(t)
 
     def spawn_monster(self):
         m = monster.Monster()

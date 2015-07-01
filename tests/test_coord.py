@@ -111,6 +111,15 @@ def test_bearing_northwest_far():
     assert v.xVelocity < 0
     assert v.yVelocity < 0
 
+def test_bearing_west_far():
+    tower = coord.Coord(256, 0)
+    monster = coord.Coord(288, 0)
+    bearing = tower.bearing(monster)
+    assert bearing == coord.EAST
+    v = velocity.Velocity(100, bearing)
+    assert v.xVelocity == 100
+    assert v.yVelocity == 0
+
 def test_ordering():
     c1 = coord.Coord(5, 50)
     c2 = coord.Coord(6, 27)

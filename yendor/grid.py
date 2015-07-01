@@ -18,23 +18,32 @@ class Grid:
         self.gs.set_grid(self)
 
         self.cell_size = 32 # each grid cell occupies X*Y pixels
+        assert self.cell_size == BASE_HEIGHT
+        assert BASE_WIDTH == BASE_HEIGHT
+
         self.cols = GRID_WIDTH / self.cell_size
         self.rows = GRID_HEIGHT / self.cell_size
         self.obstacles = set()
 
-        # XXX - move these to Dungeon class
-        base_cc = coord.Coord(GRID_WIDTH - BASE_WIDTH,
-                              GRID_HEIGHT - BASE_HEIGHT)
-        self.base = self.client_coord_to_grid(base_cc)
+        # XXX - move to Dungeon class
+        self.base = coord.Coord(self.cols - 1, self.rows - 1)
         self.spawn_origin = coord.Coord(0, 0)
 
     def draw(self, screen):
+        BLACK = (0, 0, 0)
         RED = (255, 0, 0)
 
         # Draw the Yendorian base.
         base_cc = self.grid_coord_to_client(self.base)
-        pygame.draw.rect(screen, RED, [base_cc.x, base_cc.y,
-                                       self.cell_size, self.cell_size])
+        r = [base_cc.x, base_cc.y,
+             self.cell_size, self.cell_size]
+        pygame.draw.rect(screen, RED, r)
+
+        # Draw a border around the entire grid.
+        pygame.draw.line(screen, BLACK,
+                         (GRID_WIDTH + 5, 0),
+                         (GRID_WIDTH + 5, GRID_HEIGHT),
+                         3)
 
     def passable(self, c):
         """Return true if there are no obstacles at the given
@@ -78,17 +87,13 @@ class Grid:
         for m in self.gs.monsters:
             m.update_path(self)
 
-        print("added obstacle at {}".format(tower_gc))
         return True
 
     def grid_coord_to_client(self, cc):
         """Given a grid-based Coord, return a client-based Coord
         that covers the grid location."""
-        left = cc.x * self.cell_size
-        top = cc.y * self.cell_size
-        x = left + self.cell_size / 2
-        y = top + self.cell_size / 2
-
+        x = cc.x * self.cell_size
+        y = cc.y * self.cell_size
         return coord.Coord(x, y)
 
     def client_coord_to_grid(self, c):

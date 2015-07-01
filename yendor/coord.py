@@ -37,7 +37,7 @@ class Coord:
 
     def __hash__(self):
         # XXX - assuming x and y fit into 16b
-        return (self.x << 16) | self.y
+        return (int(self.x) << 16) | int(self.y)
 
     def __repr__(self):
         return '({}, {})'.format(self.x, self.y)
@@ -60,16 +60,13 @@ class Coord:
                 opp = other.y - self.y
                 adj = other.x - self.x
                 quad = 0.0
-                print("q1")
             elif self.y < other.y:
                 # Quadrant IV
                 opp = self.x - other.x
                 adj = other.y - self.y
                 quad = math.pi * 0.5
-                print("q4")
             else:
                 # Due east
-                print("east")
                 return EAST
         elif (self.x > other.x):
             # Quadrant II or III
@@ -78,29 +75,23 @@ class Coord:
                 opp = self.y - other.y
                 adj = self.x - other.x
                 quad = math.pi
-                print("q2")
             elif (self.y < other.y):
                 # Quadrant III
                 opp = self.x - other.x
                 adj = other.y - self.y
                 quad = math.pi * 0.5
-                print("q3")
             else:
                 # Due west
-                print("west")
                 return WEST
         else:
             # Xs are equal
             if (self.y < other.y):
                 # Due south
-                print("south")
                 return SOUTH
             elif (self.y > other.y):
                 # Due north
-                print("north")
                 return NORTH
             else:
-                print("same")
                 return EAST  # XXX arbitrary
 
         def norm(angle):
