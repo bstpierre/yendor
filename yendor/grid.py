@@ -46,7 +46,7 @@ class Grid:
                          3)
 
     def passable(self, c):
-        """Return true if there are no obstacles at the given
+        """Return True if there are no obstacles at the given
         grid-coord."""
         return c not in self.obstacles
 
@@ -59,6 +59,10 @@ class Grid:
         client-based Coord.
         """
         tower_gc = self.client_coord_to_grid(obs.center)
+        if not self.in_bounds(tower_gc):
+            print("Can't place tower out of bounds")
+            return False
+
         if not self.passable(tower_gc):
             print("Can't place tower on existing tower")
             return False
@@ -109,6 +113,7 @@ class Grid:
         return self.grid_coord_to_client(gc)
 
     def in_bounds(self, gc):
+        """Return True if the grid-based coord is valid."""
         return (gc.x >= 0 and
                 gc.x < self.cols and
                 gc.y >= 0 and

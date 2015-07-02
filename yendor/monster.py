@@ -11,7 +11,6 @@ from . import (
 class Monster(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load("assets/dwarf-sm.png").convert()
         self.width = self.image.get_rect().width
         self.height = self.image.get_rect().height
         self.radius = self.width
@@ -78,3 +77,15 @@ class Monster(pygame.sprite.Sprite):
         self.health -= damage
         if self.health <= 0:
             self.kill()
+
+
+class Dwarf(Monster):
+    def __init__(self):
+        self.image = pygame.image.load("assets/dwarf-sm.png").convert()
+        super().__init__()
+
+
+class Orc(Monster):
+    def __init__(self):
+        self.image = pygame.image.load("assets/orc-sm.png").convert()
+        super().__init__()

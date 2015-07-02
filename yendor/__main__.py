@@ -13,6 +13,7 @@ from . import (
     monster,
     tower,
     velocity,
+    wave,
     )
 
 def main(args=None):
@@ -33,7 +34,9 @@ def main(args=None):
 
     clock = pygame.time.Clock()
 
-    gs = gamestate.GameState()
+    waves = [wave.Wave(monster.Dwarf, 5, 60),
+             wave.Wave(monster.Orc, 2, 240)]
+    gs = gamestate.GameState(waves)
     g = grid.Grid(gs)
 
     ticks = 0
@@ -46,6 +49,7 @@ def main(args=None):
 
     running = True
     paused = False
+
     while running:
         if paused:
             for event in pygame.event.get():
@@ -65,7 +69,7 @@ def main(args=None):
                 if event.key in [pygame.K_q, pygame.K_ESCAPE]:
                     running = False
                 elif event.key in [pygame.K_m]:
-                    m = gs.spawn_monster()
+                    m = gs.spawn_monster(monster.Orc)
                     m.update_path(gs.grid)
                 elif event.key == pygame.K_p:
                     paused = not paused
@@ -114,6 +118,17 @@ def main(args=None):
 
         screen.fill(WHITE)
 
+        # Draw wave status.
+        nwaves = len(gs.waves)
+        w = gs.waves[gs.cur_wave] if gs.cur_wave < nwaves else gs.waves[-1]
+        wave_msg = "Wave {}/{}, Monster {}/{}".format(
+            gs.cur_wave + 1 if gs.cur_wave < nwaves else nwaves, nwaves,
+            w.spawned, w.count)
+        text = font.render(wave_msg, True, BLACK)
+        text_x = grid.GRID_WIDTH + 20 # XXX
+        text_y = 20
+        screen.blit(text, [text_x, text_y])
+
         if selected is not None:
             r = selected.rect
             cc = coord.Coord.from_rect(r)
@@ -121,8 +136,7 @@ def main(args=None):
             agc = gs.grid.client_coord_aligned(cc)
             text = font.render("Monster @ {} / {} / {}".format(r, gc, agc),
                                True, BLACK)
-            text_x = grid.GRID_WIDTH + 20 # XXX
-            text_y = 20
+            text_y = 100
             screen.blit(text, [text_x, text_y])
 
         gs.draw(screen)

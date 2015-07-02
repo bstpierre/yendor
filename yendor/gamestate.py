@@ -6,13 +6,15 @@ from . import monster
 
 
 class GameState:
-    def __init__(self):
+    def __init__(self, waves):
         self.ticks = 0
         self.bullets = pygame.sprite.Group()
         self.monsters = pygame.sprite.Group()
         self.towers = pygame.sprite.Group()
         self.clickables = pygame.sprite.Group()
         self.grid = None
+        self.waves = waves
+        self.cur_wave = 0
 
     @property
     def rect(self):
@@ -54,6 +56,15 @@ class GameState:
                 # XXX tower only fires at one monster
                 break
 
+        # Spawn monsters.
+        if self.cur_wave < len(self.waves):
+            w = self.waves[self.cur_wave]
+            w.update(self)
+            if not w.active:
+                self.cur_wave += 1
+                if self.cur_wave < len(self.waves):
+                    self.waves[self.cur_wave].last = self.ticks
+
     def add_bullet(self, b):
         self.bullets.add(b)
 
@@ -67,8 +78,9 @@ class GameState:
                 self.towers.add(t)
                 self.clickables.add(t)
 
-    def spawn_monster(self):
-        m = monster.Monster()
+    def spawn_monster(self, cls):
+        m = cls()
+        m.update_path(self.grid)
         self.add_monster(m)
         return m
 
