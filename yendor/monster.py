@@ -7,12 +7,16 @@ from . import (
     velocity,
     )
 
+MONSTER_WIDTH = 32
+MONSTER_HEIGHT = 32
+
 
 class Monster(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, code='?'):
         super().__init__()
-        self.width = self.image.get_rect().width
-        self.height = self.image.get_rect().height
+        self._set_image(code)
+        self.width = MONSTER_WIDTH
+        self.height = MONSTER_HEIGHT
         self.radius = self.width
         self.health = 1000
         self.path = []
@@ -31,6 +35,13 @@ class Monster(pygame.sprite.Sprite):
         r.x = self.coord.x
         r.y = self.coord.y
         return r
+
+    def _set_image(self, code):
+        WHITE = (255, 255, 255)
+        self.image = pygame.Surface((MONSTER_WIDTH, MONSTER_HEIGHT))
+        font = pygame.font.Font(None, 32)
+        text = font.render(code, True, WHITE)
+        self.image.blit(text, (5, 5))
 
     def status_message(self, gs):
         """Returns string containing user-facing monster status."""
@@ -88,11 +99,9 @@ class Monster(pygame.sprite.Sprite):
 
 class Dwarf(Monster):
     def __init__(self):
-        self.image = pygame.image.load("assets/dwarf-sm.png").convert()
-        super().__init__()
+        super().__init__(code='D')
 
 
 class Orc(Monster):
     def __init__(self):
-        self.image = pygame.image.load("assets/orc-sm.png").convert()
-        super().__init__()
+        super().__init__(code='O')

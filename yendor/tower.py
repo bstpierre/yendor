@@ -2,14 +2,23 @@
 
 import pygame
 
-from . import coord
-from . import velocity
+from . import (
+    bullet,
+    coord,
+    velocity,
+    )
+
+TOWER_WIDTH = 32
+TOWER_HEIGHT = 32
+
+BLUE = (64, 64, 255)
+BROWN = (135, 80, 25)
 
 
 class Tower(pygame.sprite.Sprite):
-    def __init__(self, bullet_factory):
+    def __init__(self, bullet_factory, code='?', color=BLUE):
         super().__init__()
-        self.image = pygame.image.load("assets/tower-sm.png").convert()
+        self._set_image(code, color)
         self.rect = self.image.get_rect()
         self.rect.x = 200
         self.rect.y = 200
@@ -26,6 +35,14 @@ class Tower(pygame.sprite.Sprite):
     @property
     def coord(self):
         return coord.Coord.from_rect(self.rect, centered=False)
+
+    def _set_image(self, code, color):
+        WHITE = (255, 255, 255)
+        self.image = pygame.Surface((TOWER_WIDTH, TOWER_HEIGHT))
+        self.image.fill(color)
+        font = pygame.font.Font(None, 24)
+        text = font.render(code, True, WHITE)
+        self.image.blit(text, (5, 10))
 
     def status_message(self, gs):
         """Returns string containing user-facing tower status."""
@@ -49,3 +66,22 @@ class Tower(pygame.sprite.Sprite):
         v = velocity.Velocity(speed=20, direction=bearing)
         b = self.bullet_factory(velocity=v, coord=tc)
         return b
+
+
+class Slingshot(Tower):
+    def __init__(self):
+        super().__init__(bullet_factory=bullet.Bullet,
+                         code='S1', color=BLUE)
+
+
+class Wall(Tower):
+    def __init__(self):
+        super().__init__(bullet_factory=None,
+                         code='', color=BROWN)
+        self.radius = 0 # range
+
+    def fire(self, monster, ticks):
+        return None
+
+    def status_message(self, gs):
+        return ''

@@ -2,7 +2,10 @@
 
 import pygame
 
-from . import coord
+from . import (
+    coord,
+    velocity,
+    )
 
 
 class Bullet(pygame.sprite.Sprite):

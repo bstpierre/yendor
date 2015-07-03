@@ -63,6 +63,7 @@ class GameState:
                 break
 
         # Fire the towers.
+        # XXX - should filter out the walls (i.e towers that can't fire).
         in_range = pygame.sprite.groupcollide(
             self.towers, self.monsters, False, False,
             collided=pygame.sprite.collide_circle)
@@ -72,7 +73,8 @@ class GameState:
                 continue
             for m in ms:
                 b = t.fire(m, ticks)
-                self.add_bullet(b)
+                if b:
+                    self.add_bullet(b)
                 # XXX tower only fires at one monster
                 break
 

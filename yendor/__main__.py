@@ -76,7 +76,20 @@ def main(args=None):
                 elif event.key in [pygame.K_t]:
                     if placing_tower is None:
                         selected = None
-                        placing_tower = tower.Tower(bullet.Bullet)
+                        placing_tower = tower.Slingshot()
+                        pos = pygame.mouse.get_pos()
+                        cc = coord.Coord(pos[0], pos[1])
+                        aligned = gs.grid.client_coord_aligned(cc)
+                        placing_tower.rect.x = aligned.x
+                        placing_tower.rect.y = aligned.y
+                        placing_group.add(placing_tower)
+                    else:
+                        placing_tower.kill()
+                        placing_tower = None
+                elif event.key in [pygame.K_w]:
+                    if placing_tower is None:
+                        selected = None
+                        placing_tower = tower.Wall()
                         pos = pygame.mouse.get_pos()
                         cc = coord.Coord(pos[0], pos[1])
                         aligned = gs.grid.client_coord_aligned(cc)
