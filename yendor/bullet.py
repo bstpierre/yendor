@@ -6,6 +6,8 @@ from . import coord
 
 
 class Bullet(pygame.sprite.Sprite):
+    damage = 1
+
     def __init__(self, velocity, coord):
         super().__init__()
         self.velocity = velocity
@@ -13,7 +15,6 @@ class Bullet(pygame.sprite.Sprite):
         self.image.fill((200, 0, 0))
         self.coord = coord
         self.radius = self.rect.width
-        self.damage = 1
 
     def update(self, dt):
         self.coord.x += self.velocity.xVelocity

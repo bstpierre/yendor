@@ -32,6 +32,13 @@ class Monster(pygame.sprite.Sprite):
         r.y = self.coord.y
         return r
 
+    def status_message(self, gs):
+        """Returns string containing user-facing monster status."""
+        gc = gs.grid.client_coord_to_grid(self.coord)
+        msg = '{} @ {}'.format(self.__class__.__name__, gc)
+        msg += ', health: {}'.format(self.health)
+        return msg
+
     def _head_to_goal(self):
         assert len(self.path) > 0
         assert self.grid is not None

@@ -6,14 +6,17 @@ from . import monster
 
 
 class GameState:
-    def __init__(self, waves):
+    fps = 30
+
+    def __init__(self, clock, waves):
         self.ticks = 0
+        self.clock = clock
+        self.waves = waves
         self.bullets = pygame.sprite.Group()
         self.monsters = pygame.sprite.Group()
         self.towers = pygame.sprite.Group()
         self.clickables = pygame.sprite.Group()
         self.grid = None
-        self.waves = waves
         self.cur_wave = 0
 
     @property
@@ -23,6 +26,20 @@ class GameState:
         r.y = self.coord.y
         return r
 
+    def status_message(self):
+        """Returns string containing user-facing game status."""
+        nwaves = len(self.waves)
+        cur = self.cur_wave
+        if cur < nwaves:
+            w = self.waves[cur]
+            cur = cur + 1
+        else:
+            w = self.waves[-1]
+            cur = nwaves
+        msg = "Wave {}/{}, Monster {}/{}".format(
+            cur, nwaves, w.spawned, w.count)
+        return msg
+
     def set_grid(self, g):
         self.grid = g
 
@@ -31,6 +48,9 @@ class GameState:
         self.bullets.update(ticks)
         self.monsters.update(ticks)
         self.towers.update(ticks)
+
+        # Limit FPS
+        self.clock.tick(self.fps)
 
         # Injure monsters with bullets.
         hits = pygame.sprite.groupcollide(self.bullets,

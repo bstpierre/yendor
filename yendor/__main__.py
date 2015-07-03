@@ -36,7 +36,7 @@ def main(args=None):
 
     waves = [wave.Wave(monster.Dwarf, 5, 60),
              wave.Wave(monster.Orc, 2, 240)]
-    gs = gamestate.GameState(waves)
+    gs = gamestate.GameState(clock=clock, waves=waves)
     g = grid.Grid(gs)
 
     ticks = 0
@@ -113,29 +113,17 @@ def main(args=None):
         ticks += 1
         gs.update(ticks)
 
-        # 30fps
-        clock.tick(30)
-
         screen.fill(WHITE)
 
         # Draw wave status.
-        nwaves = len(gs.waves)
-        w = gs.waves[gs.cur_wave] if gs.cur_wave < nwaves else gs.waves[-1]
-        wave_msg = "Wave {}/{}, Monster {}/{}".format(
-            gs.cur_wave + 1 if gs.cur_wave < nwaves else nwaves, nwaves,
-            w.spawned, w.count)
-        text = font.render(wave_msg, True, BLACK)
+        msg = gs.status_message()
+        text = font.render(msg, True, BLACK)
         text_x = grid.GRID_WIDTH + 20 # XXX
         text_y = 20
         screen.blit(text, [text_x, text_y])
 
         if selected is not None:
-            r = selected.rect
-            cc = coord.Coord.from_rect(r)
-            gc = gs.grid.client_coord_to_grid(cc)
-            agc = gs.grid.client_coord_aligned(cc)
-            text = font.render("Monster @ {} / {} / {}".format(r, gc, agc),
-                               True, BLACK)
+            text = font.render(selected.status_message(gs), True, BLACK)
             text_y = 100
             screen.blit(text, [text_x, text_y])
 

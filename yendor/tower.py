@@ -14,18 +14,31 @@ class Tower(pygame.sprite.Sprite):
         self.rect.x = 200
         self.rect.y = 200
         self.radius = 100 # range
-        self.rate = 20 # ticks to reload
+        self.rate = 15 # ticks to reload
         self.last_fired = 0
         self.loaded = True
         self.bullet_factory = bullet_factory
 
-    def update(self, ticks):
-        if self.last_fired + self.rate < ticks:
-            self.loaded = True
-
     @property
     def center(self):
         return coord.Coord.from_rect(self.rect, centered=True)
+
+    @property
+    def coord(self):
+        return coord.Coord.from_rect(self.rect, centered=False)
+
+    def status_message(self, gs):
+        """Returns string containing user-facing tower status."""
+        gc = gs.grid.client_coord_to_grid(self.coord)
+        msg = '{} @ {}'.format(self.__class__.__name__, gc)
+        shots_per_second = float(gs.fps) / float(self.rate)
+        damage_per_second = self.bullet_factory.damage * shots_per_second
+        msg += ', damage/sec: {}'.format(damage_per_second)
+        return msg
+
+    def update(self, ticks):
+        if self.last_fired + self.rate < ticks:
+            self.loaded = True
 
     def fire(self, monster, ticks):
         self.loaded = False
