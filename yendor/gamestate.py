@@ -43,14 +43,18 @@ class GameState:
     def set_grid(self, g):
         self.grid = g
 
-    def update(self, ticks):
-        self.ticks = ticks
-        self.bullets.update(ticks)
-        self.monsters.update(ticks)
-        self.towers.update(ticks)
+    @property
+    def seconds(self):
+        return self.ticks / 1000.0
 
+    def update(self):
         # Limit FPS
-        self.clock.tick(self.fps)
+        dt = self.clock.tick(self.fps)
+        self.ticks = pygame.time.get_ticks()
+
+        self.bullets.update(dt)
+        self.monsters.update(dt)
+        self.towers.update(self)
 
         # Injure monsters with bullets.
         hits = pygame.sprite.groupcollide(self.bullets,
@@ -72,7 +76,7 @@ class GameState:
             if not t.loaded:
                 continue
             for m in ms:
-                b = t.fire(m, ticks)
+                b = t.fire(m, self.seconds)
                 if b:
                     self.add_bullet(b)
                 # XXX tower only fires at one monster
@@ -85,7 +89,7 @@ class GameState:
             if not w.active:
                 self.cur_wave += 1
                 if self.cur_wave < len(self.waves):
-                    self.waves[self.cur_wave].last = self.ticks
+                    self.waves[self.cur_wave].start(self.seconds)
 
     def add_bullet(self, b):
         self.bullets.add(b)

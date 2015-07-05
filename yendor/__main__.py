@@ -34,12 +34,11 @@ def main(args=None):
 
     clock = pygame.time.Clock()
 
-    waves = [wave.Wave(monster.Dwarf, 5, 60),
-             wave.Wave(monster.Orc, 2, 240)]
+    waves = [wave.Wave(monster.Dwarf, 5, 2.0),
+             wave.Wave(monster.Orc, 2, 4.0)]
     gs = gamestate.GameState(clock=clock, waves=waves)
     g = grid.Grid(gs)
 
-    ticks = 0
     placing_group = pygame.sprite.Group()
     placing_tower = None
 
@@ -123,8 +122,7 @@ def main(args=None):
                     placing_tower.rect.x = aligned.x
                     placing_tower.rect.y = aligned.y
 
-        ticks += 1
-        gs.update(ticks)
+        gs.update()
 
         screen.fill(WHITE)
 

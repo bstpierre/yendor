@@ -20,8 +20,9 @@ class Bullet(pygame.sprite.Sprite):
         self.radius = self.rect.width
 
     def update(self, dt):
-        self.coord.x += self.velocity.xVelocity
-        self.coord.y += self.velocity.yVelocity
+        """Update the Bullet for `dt` milliseconds."""
+        self.coord.x += self.velocity.xVelocity * (dt / 1000.0)
+        self.coord.y += self.velocity.yVelocity * (dt / 1000.0)
 
     @property
     def rect(self):

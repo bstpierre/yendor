@@ -23,7 +23,7 @@ class Tower(pygame.sprite.Sprite):
         self.rect.x = 200
         self.rect.y = 200
         self.radius = 100 # range
-        self.rate = 15 # ticks to reload
+        self.rate = 0.5 # seconds to reload
         self.last_fired = 0
         self.loaded = True
         self.bullet_factory = bullet_factory
@@ -53,28 +53,32 @@ class Tower(pygame.sprite.Sprite):
         msg += ', damage/sec: {}'.format(damage_per_second)
         return msg
 
-    def update(self, ticks):
-        if self.last_fired + self.rate < ticks:
+    def update(self, gs):
+        if self.last_fired + self.rate < gs.seconds:
             self.loaded = True
 
-    def fire(self, monster, ticks):
+    def fire(self, monster, seconds):
         self.loaded = False
-        self.last_fired = ticks
+        self.last_fired = seconds
         mc = monster.center
         tc = self.center
         bearing = tc.bearing(mc)
-        v = velocity.Velocity(speed=20, direction=bearing)
+        v = velocity.Velocity(speed=600, direction=bearing)
         b = self.bullet_factory(velocity=v, coord=tc)
         return b
 
 
 class Slingshot(Tower):
+    cost = 10
+
     def __init__(self):
         super().__init__(bullet_factory=bullet.Bullet,
                          code='S1', color=BLUE)
 
 
 class Wall(Tower):
+    cost = 5
+
     def __init__(self):
         super().__init__(bullet_factory=None,
                          code='', color=BROWN)

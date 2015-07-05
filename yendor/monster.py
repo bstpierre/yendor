@@ -22,7 +22,7 @@ class Monster(pygame.sprite.Sprite):
         self.path = []
         self.grid = None
         self.coord = coord.Coord(256, 0) # XXX
-        self.velocity = velocity.Velocity(1, coord.SOUTH) # XXX
+        self.velocity = velocity.Velocity(30, coord.SOUTH) # XXX
 
     @property
     def center(self):
@@ -55,11 +55,11 @@ class Monster(pygame.sprite.Sprite):
         assert self.grid is not None
         goal_cc = self.grid.grid_coord_to_client(self.path[0])
         bearing = self.coord.bearing(goal_cc)
-        self.velocity = velocity.Velocity(speed=1, direction=bearing)
+        self.velocity.set_direction(bearing)
 
     def update(self, dt):
-        self.coord.x += self.velocity.xVelocity
-        self.coord.y += self.velocity.yVelocity
+        self.coord.x += self.velocity.xVelocity * (dt / 1000.0)
+        self.coord.y += self.velocity.yVelocity * (dt / 1000.0)
         if len(self.path) == 0:
             print("SMASH BASE (via update)")
             self.kill()
