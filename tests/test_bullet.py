@@ -1,9 +1,5 @@
 #!/usr/bin/python
 
-import math
-
-import pytest
-
 from yendor import (
     bullet,
     coord,

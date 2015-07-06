@@ -143,7 +143,9 @@ def test_ordering():
     assert c1 < c3
     assert c3 > c1
     assert c3 == c3
+    assert c3 == c4
     assert not (c3 != c3)
+    assert not (c3 != c4)
 
     with pytest.raises(TypeError):
         c1 < 5

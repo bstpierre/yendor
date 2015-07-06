@@ -1,16 +1,13 @@
 #!/usr/bin/python
 
-import math
+from unittest.mock import Mock
 
 import pygame
 import pygame.freetype
 import pytest
 
 from yendor import (
-    bullet,
-    coord,
     monster,
-    velocity,
     )
 
 
@@ -41,10 +38,20 @@ def test_monster_injure(fontinit):
     g.add(m)
     assert m.alive()
 
-    assert m.health == 1000
-    m.injure(999)
+    assert m.health == 25
+    m.injure(24)
     assert m.health == 1
     assert m.alive()
     m.injure(1)
     assert m.health == 0
     assert not m.alive()
+
+def test_monster_status_message(fontinit):
+    m = monster.Orc()
+    m.health = 1234
+    gs = Mock()
+    gs.grid = Mock()
+    gs.grid.client_coord_to_grid.return_value = "XYZ"
+    msg = m.status_message(gs)
+    assert "Orc @ XYZ" in msg
+    assert "health: 1234" in msg

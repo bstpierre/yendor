@@ -69,7 +69,7 @@ class Tower(pygame.sprite.Sprite):
 
 
 class Slingshot(Tower):
-    cost = 10
+    cost = 20
 
     def __init__(self):
         super().__init__(bullet_factory=bullet.Bullet,
@@ -77,7 +77,7 @@ class Slingshot(Tower):
 
 
 class Wall(Tower):
-    cost = 5
+    cost = 2
 
     def __init__(self):
         super().__init__(bullet_factory=None,

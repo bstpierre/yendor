@@ -18,11 +18,11 @@ class Monster(pygame.sprite.Sprite):
         self.width = MONSTER_WIDTH
         self.height = MONSTER_HEIGHT
         self.radius = self.width
-        self.health = 1000
         self.path = []
         self.grid = None
         self.coord = coord.Coord(256, 0) # XXX
         self.velocity = velocity.Velocity(30, coord.SOUTH) # XXX
+        self.money = self.health / 5
 
     @property
     def center(self):
@@ -99,9 +99,11 @@ class Monster(pygame.sprite.Sprite):
 
 class Dwarf(Monster):
     def __init__(self):
+        self.health = 10
         super().__init__(code='D')
 
 
 class Orc(Monster):
     def __init__(self):
+        self.health = 25
         super().__init__(code='O')

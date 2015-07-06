@@ -61,6 +61,7 @@ def main(args=None):
             clock.tick(30)
             continue
 
+        # FIXME: move event handling into gamestate
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -127,11 +128,12 @@ def main(args=None):
         screen.fill(WHITE)
 
         # Draw wave status.
-        msg = gs.status_message()
-        text = font.render(msg, True, BLACK)
         text_x = grid.GRID_WIDTH + 20 # XXX
         text_y = 20
-        screen.blit(text, [text_x, text_y])
+        for msg in gs.status_message():
+            text = font.render(msg, True, BLACK)
+            screen.blit(text, [text_x, text_y])
+            text_y += 20
 
         if selected is not None:
             text = font.render(selected.status_message(gs), True, BLACK)

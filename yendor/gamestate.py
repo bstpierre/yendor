@@ -19,6 +19,9 @@ class GameState:
         self.grid = None
         self.cur_wave = 0
 
+        # Initial money.
+        self.money = 50
+
     @property
     def rect(self):
         r = self.image.get_rect()
@@ -27,7 +30,7 @@ class GameState:
         return r
 
     def status_message(self):
-        """Returns string containing user-facing game status."""
+        """Returns strings containing user-facing game status."""
         nwaves = len(self.waves)
         cur = self.cur_wave
         if cur < nwaves:
@@ -36,9 +39,11 @@ class GameState:
         else:
             w = self.waves[-1]
             cur = nwaves
-        msg = "Wave {}/{}, Monster {}/{}".format(
-            cur, nwaves, w.spawned, w.count)
-        return msg
+        msgs = ["Wave {}/{}, Monster {}/{}".format(
+            cur, nwaves, w.spawned, w.count),
+                "${}".format(self.money),
+                ]
+        return msgs
 
     def set_grid(self, g):
         self.grid = g
@@ -62,8 +67,10 @@ class GameState:
                                           True, False)
         for b, ms in hits.items():
             for m in ms:
+                # Note: bullet only one hits one monster, so break.
                 m.injure(b.damage)
-                # XXX - bullet only one hits one monster
+                if not m.alive():
+                    self.money += m.money
                 break
 
         # Fire the towers.
@@ -99,6 +106,11 @@ class GameState:
         self.clickables.add(m)
 
     def add_tower(self, t):
+        if self.money < t.cost:
+            print("Not enough money.")
+            return
+
+        self.money -= t.cost
         if self.grid is not None:
             if self.grid.add_obstacle(t):
                 self.towers.add(t)

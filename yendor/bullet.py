@@ -9,7 +9,7 @@ from . import (
 
 
 class Bullet(pygame.sprite.Sprite):
-    damage = 1
+    damage = 3
 
     def __init__(self, velocity, coord):
         super().__init__()
