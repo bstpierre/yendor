@@ -2,7 +2,11 @@
 
 import pygame
 
-from . import monster
+from . import (
+    coord,
+    monster,
+    tower,
+    )
 
 
 class GameState:
@@ -18,6 +22,13 @@ class GameState:
         self.clickables = pygame.sprite.Group()
         self.grid = None
         self.cur_wave = 0
+        self.running = True
+        self.paused = False
+        self.placing_group = pygame.sprite.Group()
+        self.placing_tower = None
+
+        # XXX - move logic from main into here.
+        self.selected = None
 
         # Initial money.
         self.money = 50
@@ -51,6 +62,85 @@ class GameState:
     @property
     def seconds(self):
         return self.ticks / 1000.0
+
+    def active(self):
+        return self.running
+
+    def handle_events(self):
+        # FIXME: rework pause handling so that towers can be
+        # placed/upgraded while paused -- but monsters don't move and
+        # time doesn't advance while paused.
+        if self.paused:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.running = False
+                elif event.type == pygame.KEYDOWN:
+                    if event.key in [pygame.K_q, pygame.K_ESCAPE]:
+                        self.running = False
+                    elif event.key == pygame.K_p:
+                        self.paused = False
+            return
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.running = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key in [pygame.K_q, pygame.K_ESCAPE]:
+                    self.running = False
+                elif event.key in [pygame.K_m]:
+                    m = self.spawn_monster(monster.Orc)
+                    m.update_path(self.grid)
+                elif event.key == pygame.K_p:
+                    self.paused = not self.paused
+                elif event.key in [pygame.K_t]:
+                    if self.placing_tower is None:
+                        self.selected = None
+                        self.placing_tower = tower.Slingshot()
+                        pos = pygame.mouse.get_pos()
+                        cc = coord.Coord(pos[0], pos[1])
+                        aligned = self.grid.client_coord_aligned(cc)
+                        self.placing_tower.rect.x = aligned.x
+                        self.placing_tower.rect.y = aligned.y
+                        self.placing_group.add(self.placing_tower)
+                    else:
+                        self.placing_tower.kill()
+                        self.placing_tower = None
+                elif event.key in [pygame.K_w]:
+                    if self.placing_tower is None:
+                        self.selected = None
+                        self.placing_tower = tower.Wall()
+                        pos = pygame.mouse.get_pos()
+                        cc = coord.Coord(pos[0], pos[1])
+                        aligned = self.grid.client_coord_aligned(cc)
+                        self.placing_tower.rect.x = aligned.x
+                        self.placing_tower.rect.y = aligned.y
+                        self.placing_group.add(self.placing_tower)
+                    else:
+                        self.placing_tower.kill()
+                        self.placing_tower = None
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if self.placing_tower is not None:
+                    self.add_tower(self.placing_tower)
+                    self.placing_group.empty()
+                    self.placing_tower = None
+                else:
+                    # FIXME
+                    class Player(pygame.sprite.Sprite):
+                        def __init__(self):
+                            self.rect = pygame.Rect(event.pos[0],
+                                                    event.pos[1],
+                                                    5, 5)
+                    p = Player()
+                    clicked = pygame.sprite.spritecollide(
+                        p, self.clickables, False)
+                    if clicked:
+                        self.selected = clicked[0]
+            elif event.type == pygame.MOUSEMOTION:
+                if self.placing_tower is not None:
+                    cc = coord.Coord(event.pos[0], event.pos[1])
+                    aligned = self.grid.client_coord_aligned(cc)
+                    self.placing_tower.rect.x = aligned.x
+                    self.placing_tower.rect.y = aligned.y
 
     def update(self):
         # Limit FPS
@@ -127,3 +217,4 @@ class GameState:
         self.bullets.draw(screen)
         self.monsters.draw(screen)
         self.towers.draw(screen)
+        self.placing_group.draw(screen)
