@@ -20,7 +20,11 @@ class Monster(pygame.sprite.Sprite):
         self.radius = self.width
         self.path = []
         self.grid = None
-        self.coord = coord.Coord(256, 0) # XXX
+
+        # FIXME - Coord will be set by GameState; should provide
+        # method to set it.
+        self.coord = coord.Coord(0, 0)
+
         self.velocity = velocity.Velocity(30, coord.SOUTH) # XXX
         self.money = self.health / 5
 
@@ -80,7 +84,7 @@ class Monster(pygame.sprite.Sprite):
     def update_path(self, grid):
         self.grid = grid
         my_gc = grid.client_coord_to_grid(self.center)
-        self.path = grid.path(my_gc, grid.base)
+        self.path = grid.path(my_gc, grid.gs.dungeon.base)
         if self.path:
             assert my_gc == self.path[0]
             self.path.pop(0)
@@ -107,3 +111,9 @@ class Orc(Monster):
     def __init__(self):
         self.health = 25
         super().__init__(code='O')
+
+monsters = {n: g for (n, g) in globals().items() if (
+    type(g) == type(Monster) and
+    issubclass(g, Monster) and
+    g is not Monster
+    )}

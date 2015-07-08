@@ -1,9 +1,12 @@
 #!/usr/bin/python
 
+import copy
+
 import pygame
 
 from . import (
     coord,
+    dungeon,
     monster,
     tower,
     )
@@ -31,7 +34,10 @@ class GameState:
         self.selected = None
 
         # Initial money.
-        self.money = 50
+        self.money = 30
+
+        # Load dungeon when grid gets set.
+        self.dungeon = None
 
     @property
     def rect(self):
@@ -58,6 +64,8 @@ class GameState:
 
     def set_grid(self, g):
         self.grid = g
+        if self.dungeon is None:
+            self.dungeon = dungeon.Dungeon.load(self, 'levels/1.dungeon')
 
     @property
     def seconds(self):
@@ -208,6 +216,7 @@ class GameState:
 
     def spawn_monster(self, cls):
         m = cls()
+        m.coord = copy.copy(self.dungeon.spawn_origin)
         m.update_path(self.grid)
         self.add_monster(m)
         return m

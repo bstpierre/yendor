@@ -20,8 +20,6 @@ class Tower(pygame.sprite.Sprite):
         super().__init__()
         self._set_image(code, color)
         self.rect = self.image.get_rect()
-        self.rect.x = 200
-        self.rect.y = 200
         self.radius = 100 # range
         self.rate = 0.5 # seconds to reload
         self.last_fired = 0

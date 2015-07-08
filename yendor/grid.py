@@ -14,9 +14,6 @@ BASE_HEIGHT = 32
 
 class Grid:
     def __init__(self, gs):
-        self.gs = gs
-        self.gs.set_grid(self)
-
         self.cell_size = 32 # each grid cell occupies X*Y pixels
         assert self.cell_size == BASE_HEIGHT
         assert BASE_WIDTH == BASE_HEIGHT
@@ -25,16 +22,15 @@ class Grid:
         self.rows = GRID_HEIGHT / self.cell_size
         self.obstacles = set()
 
-        # XXX - move to Dungeon class
-        self.base = coord.Coord(self.cols - 1, self.rows - 1)
-        self.spawn_origin = coord.Coord(0, 0)
+        self.gs = gs
+        self.gs.set_grid(self)
 
     def draw(self, screen):
         BLACK = (0, 0, 0)
         RED = (255, 0, 0)
 
         # Draw the Yendorian base.
-        base_cc = self.grid_coord_to_client(self.base)
+        base_cc = self.grid_coord_to_client(self.gs.dungeon.base)
         r = [base_cc.x, base_cc.y,
              self.cell_size, self.cell_size]
         pygame.draw.rect(screen, RED, r)
@@ -69,7 +65,10 @@ class Grid:
 
         # Track locations of monsters.
         locs = set()
-        locs.add(self.spawn_origin)
+        if (self.gs and
+            self.gs.dungeon and
+            self.gs.dungeon.spawn_origin):
+            locs.add(self.gs.dungeon.spawn_origin)
         for m in self.gs.monsters:
             gc = self.client_coord_to_grid(m.center)
             if gc == tower_gc:
@@ -82,7 +81,7 @@ class Grid:
         self.obstacles.add(tower_gc)
 
         for loc in locs:
-            path = self.path(loc, self.base)
+            path = self.path(loc, self.gs.dungeon.base)
             if len(path) == 0:
                 self.obstacles.remove(tower_gc)
                 print("Can't place tower to block path")

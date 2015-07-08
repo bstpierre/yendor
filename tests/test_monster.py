@@ -11,6 +11,7 @@ from yendor import (
     )
 
 
+# FIXME: de-dupe with test_dungeon.py
 @pytest.fixture
 def fontinit():
     pygame.init()
@@ -19,13 +20,13 @@ def fontinit():
 
 def test_monster_update(fontinit):
     m = monster.Dwarf()
-    assert m.rect.x == 256
+    assert m.rect.x == 0
     assert m.rect.y == 0
 
     # 1s update, should move south 10px
     # XXX - move hardcoded 30px/s velocity out of monster.py
     m.update(1000)
-    assert m.rect.x == 256
+    assert m.rect.x == 0
     assert m.rect.y == 30
 
     # NOTE: monster will be inactive after that update because the

@@ -25,6 +25,7 @@ def test_gamestate_update_monster_kill_money():
     m = Mock()
     m.alive.return_value = False
     m.money = 10
+    initial_money = 30
 
     with patch.object(pygame.sprite, 'groupcollide') as groupcollide:
         def groupcollide_called(g1, g2, *args, **kwargs):
@@ -36,9 +37,9 @@ def test_gamestate_update_monster_kill_money():
                 return {}
         groupcollide.side_effect = groupcollide_called
         gs = gamestate.GameState(clock, waves)
-        assert gs.money == 50
+        assert gs.money == initial_money
         gs.update()
-        assert gs.money == 60
+        assert gs.money == initial_money + m.money
 
         # Bullet had multiple "hittable" monsters, but only one
         # monster took the damage.
