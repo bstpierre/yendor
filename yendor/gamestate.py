@@ -23,7 +23,6 @@ class GameState:
         self.towers = pygame.sprite.Group()
         self.clickables = pygame.sprite.Group()
         self.grid = None
-        self.cur_wave = 0
         self.running = True
         self.paused = False
         self.placing_group = pygame.sprite.Group()
@@ -47,18 +46,9 @@ class GameState:
 
     def status_message(self):
         """Returns strings containing user-facing game status."""
-        nwaves = len(self.dungeon.waves)
-        cur = self.cur_wave
-        if cur < nwaves:
-            w = self.dungeon.waves[cur]
-            cur = cur + 1
-        else:
-            w = self.dungeon.waves[-1]
-            cur = nwaves
-        msgs = ["Wave {}/{}, Monster {}/{}".format(
-            cur, nwaves, w.spawned, w.count),
-                "${}".format(self.money),
-                ]
+        msgs = []
+        msgs.append(self.dungeon.status_message())
+        msgs.append("${}".format(self.money))
         return msgs
 
     def set_grid(self, g):
@@ -186,14 +176,7 @@ class GameState:
                 # XXX tower only fires at one monster
                 break
 
-        # Spawn monsters.
-        if self.cur_wave < len(self.dungeon.waves):
-            w = self.dungeon.waves[self.cur_wave]
-            w.update(self)
-            if not w.active:
-                self.cur_wave += 1
-                if self.cur_wave < len(self.dungeon.waves):
-                    self.dungeon.waves[self.cur_wave].start(self.seconds)
+        self.dungeon.update(self)
 
     def add_bullet(self, b):
         self.bullets.add(b)

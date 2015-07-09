@@ -36,7 +36,8 @@ def test_gamestate_update_monster_kill_money():
             else:
                 return {}
         groupcollide.side_effect = groupcollide_called
-        gs = gamestate.GameState(clock, waves)
+        gs = gamestate.GameState(clock)
+        gs.dungeon = Mock()
         assert gs.money == initial_money
         gs.update()
         assert gs.money == initial_money + m.money
@@ -44,6 +45,7 @@ def test_gamestate_update_monster_kill_money():
         # Bullet had multiple "hittable" monsters, but only one
         # monster took the damage.
         assert m.injure.called == 1
+
 
 def test_gamestate_handle_events_pause_quit():
     clock = Mock()
@@ -56,7 +58,7 @@ def test_gamestate_handle_events_pause_quit():
 
         event_get.side_effect = event_get_called
 
-        gs = gamestate.GameState(clock, waves)
+        gs = gamestate.GameState(clock)
         assert not gs.paused
         assert gs.running
 
@@ -78,7 +80,7 @@ def test_gamestate_handle_events_pause_quit():
         assert event_get.call_count == 2
 
         # 'pause' -- p -> paused, p -> unpaused
-        gs = gamestate.GameState(clock, waves)
+        gs = gamestate.GameState(clock)
         event_key_p = Mock()
         event_key_p.type = pygame.KEYDOWN
         event_key_p.key = pygame.K_p
@@ -101,10 +103,12 @@ def test_gamestate_handle_events_pause_quit():
         assert gs.paused
         assert not gs.running
 
+
 def test_gamestate_add_tower():
     initial_money = 30
 
     towers = []
+
     def towers_add_called(t):
         towers.append(t)
 
@@ -113,7 +117,7 @@ def test_gamestate_add_tower():
     g = Mock()
     g.add_obstacle.return_value = True
     waves.__len__.return_value = 2
-    gs = gamestate.GameState(clock, waves)
+    gs = gamestate.GameState(clock)
     gs.grid = g
     gs.towers = Mock()
     gs.towers.add.side_effect = towers_add_called

@@ -4,7 +4,6 @@ import copy
 
 from yendor import (
     coord,
-    grid,
     monster,
     tower,
     wave,
@@ -16,6 +15,32 @@ class Dungeon:
         self.waves = waves
         self.spawn_origin = coord.Coord(0, 0)
         self.base = coord.Coord(0, 0)
+        self.cur_wave = 0
+
+    def status_message(self):
+        """Returns strings containing user-facing game status."""
+        nwaves = len(self.waves)
+        cur = self.cur_wave
+        if cur < nwaves:
+            w = self.waves[cur]
+            cur = cur + 1
+        else:
+            w = self.waves[-1]
+            cur = nwaves
+        msg = "Wave {}/{}, Monster {}/{}".format(
+            cur, nwaves, w.spawned, w.count)
+        return msg
+
+    def update(self, gs):
+        """Perform per-tick updates."""
+        # Spawn monsters.
+        if self.cur_wave < len(self.waves):
+            w = self.waves[self.cur_wave]
+            w.update(gs)
+            if not w.active:
+                self.cur_wave += 1
+                if self.cur_wave < len(self.waves):
+                    self.waves[self.cur_wave].start(gs.seconds)
 
     @staticmethod
     def load(gs, filename):
