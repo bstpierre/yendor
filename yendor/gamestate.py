@@ -208,9 +208,9 @@ class GameState:
             print("Not enough money.")
             return
 
-        self.money -= t.cost
         if self.grid is not None:
             if self.grid.add_obstacle(t):
+                self.money -= t.cost
                 self.towers.add(t)
                 self.clickables.add(t)
 

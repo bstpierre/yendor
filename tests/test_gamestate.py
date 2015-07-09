@@ -100,3 +100,47 @@ def test_gamestate_handle_events_pause_quit():
         gs.handle_events()
         assert gs.paused
         assert not gs.running
+
+def test_gamestate_add_tower():
+    initial_money = 30
+
+    towers = []
+    def towers_add_called(t):
+        towers.append(t)
+
+    clock = Mock()
+    waves = MagicMock()
+    g = Mock()
+    g.add_obstacle.return_value = True
+    waves.__len__.return_value = 2
+    gs = gamestate.GameState(clock, waves)
+    gs.grid = g
+    gs.towers = Mock()
+    gs.towers.add.side_effect = towers_add_called
+    gs.clickables = Mock()
+    assert gs.money == initial_money
+
+    # Enough money, should see it deducted.
+    t1 = Mock()
+    t1.cost = 10
+    gs.add_tower(t1)
+    assert gs.money == (initial_money - t1.cost)
+    assert gs.towers.add.called
+    assert gs.clickables.add.called
+    assert len(towers) == 1
+
+    # Not enough money, should see it not deducted.
+    t2 = Mock()
+    t2.cost = initial_money
+    gs.add_tower(t2)
+    assert gs.money == (initial_money - t1.cost)
+    assert len(towers) == 1
+
+    # Improper placement, should see cost not deducted and tower not
+    # placed.
+    t3 = Mock()
+    t3.cost = 5
+    g.add_obstacle.return_value = False
+    gs.add_tower(t3)
+    assert gs.money == (initial_money - t1.cost)
+    assert len(towers) == 1
