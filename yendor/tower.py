@@ -20,8 +20,8 @@ class Tower(pygame.sprite.Sprite):
         super().__init__()
         self._set_image(code, color)
         self.rect = self.image.get_rect()
-        self.radius = 100 # range
-        self.rate = 0.5 # seconds to reload
+        self.radius = 100  # range
+        self.rate = 0.5  # seconds to reload
         self.last_fired = 0
         self.loaded = True
         self.bullet_factory = bullet_factory
@@ -80,7 +80,7 @@ class Wall(Tower):
     def __init__(self):
         super().__init__(bullet_factory=None,
                          code='', color=BROWN)
-        self.radius = 0 # range
+        self.radius = 0  # range
 
     def fire(self, monster, ticks):
         return None

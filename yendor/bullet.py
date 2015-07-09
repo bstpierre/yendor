@@ -2,11 +2,6 @@
 
 import pygame
 
-from . import (
-    coord,
-    velocity,
-    )
-
 
 class Bullet(pygame.sprite.Sprite):
     damage = 2

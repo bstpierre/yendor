@@ -11,6 +11,7 @@ def assert_almost_equals(a, b):
     DELTA = 0.0001
     assert abs(a - b) < DELTA
 
+
 def test_bullet_update_east():
     v = velocity.Velocity(1000, coord.EAST)
     c = coord.Coord(100, 100)
@@ -20,6 +21,7 @@ def test_bullet_update_east():
     b.update(10)
     assert b.rect.x == 110
     assert b.rect.y == 100
+
 
 def test_bullet_update_north():
     v = velocity.Velocity(1000, coord.NORTH)

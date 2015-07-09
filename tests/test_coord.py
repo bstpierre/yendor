@@ -16,12 +16,14 @@ SOUTHWEST = (5.0 * math.pi) / 4.0
 SOUTH = (3.0 * math.pi) / 2.0
 SOUTHEAST = (7.0 * math.pi) / 4.0
 
+
 def test_bearing_same():
     c = coord.Coord(0, 0)
     assert c.bearing(c) == coord.EAST
     v = velocity.Velocity(100, c.bearing(c))
     assert v.xVelocity == 100
     assert v.yVelocity == 0
+
 
 def test_bearing_east():
     c = coord.Coord(0, 0)
@@ -34,6 +36,7 @@ def test_bearing_east():
 
     assert c.bearing(c.east()) == coord.EAST
 
+
 def test_bearing_northeast():
     c = coord.Coord(0, 0)
     northeast = coord.Coord(1, -1)
@@ -42,6 +45,7 @@ def test_bearing_northeast():
     v = velocity.Velocity(100, c.bearing(northeast))
     assert v.xVelocity > 0
     assert v.yVelocity < 0
+
 
 def test_bearing_north():
     c = coord.Coord(2, 2)
@@ -54,6 +58,7 @@ def test_bearing_north():
 
     assert c.bearing(c.north()) == coord.NORTH
 
+
 def test_bearing_northwest():
     c = coord.Coord(0, 0)
     northwest = coord.Coord(-1, -1)
@@ -62,6 +67,7 @@ def test_bearing_northwest():
     v = velocity.Velocity(100, c.bearing(northwest))
     assert v.xVelocity < -70
     assert v.yVelocity < -70
+
 
 def test_bearing_west():
     c = coord.Coord(0, 0)
@@ -74,6 +80,7 @@ def test_bearing_west():
 
     assert c.bearing(c.west()) == coord.WEST
 
+
 def test_bearing_southwest():
     c = coord.Coord(0, 0)
     southwest = coord.Coord(-1, 1)
@@ -82,6 +89,7 @@ def test_bearing_southwest():
     v = velocity.Velocity(100, c.bearing(southwest))
     assert v.xVelocity < -70
     assert v.yVelocity > 70
+
 
 def test_bearing_south():
     c = coord.Coord(0, 0)
@@ -94,6 +102,7 @@ def test_bearing_south():
 
     assert c.bearing(c.south()) == coord.SOUTH
 
+
 def test_bearing_southeast():
     c = coord.Coord(0, 0)
     southeast = coord.Coord(1, 1)
@@ -103,6 +112,7 @@ def test_bearing_southeast():
     assert v.xVelocity > 70
     assert v.yVelocity > 70
 
+
 def test_bearing_northwest_far():
     tower = coord.Coord(208.0, 216.0)
     monster = coord.Coord(162.0, 166.0)
@@ -110,6 +120,7 @@ def test_bearing_northwest_far():
     v = velocity.Velocity(100, bearing)
     assert v.xVelocity < 0
     assert v.yVelocity < 0
+
 
 def test_bearing_west_far():
     tower = coord.Coord(256, 0)
@@ -119,6 +130,7 @@ def test_bearing_west_far():
     v = velocity.Velocity(100, bearing)
     assert v.xVelocity == 100
     assert v.yVelocity == 0
+
 
 def test_ordering():
     c1 = coord.Coord(5, 50)

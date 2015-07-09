@@ -1,7 +1,5 @@
 #!/usr/bin/python
 
-import pygame
-
 
 class Wave:
     """A Wave spawns a series of monsters at a given interval.

@@ -1,6 +1,5 @@
 #!/usr/bin/python
 
-import math
 from unittest.mock import Mock
 
 import pygame
@@ -25,7 +24,6 @@ def test_dungeon_load(fontinit):
 
     expected_spawn = coord.Coord(1, 0)
     expected_base = coord.Coord(12, 14)
-    coords = [expected_spawn, expected_base]
 
     def gc_to_cc(*args, **kwargs):
         return coord.Coord(0, 0)

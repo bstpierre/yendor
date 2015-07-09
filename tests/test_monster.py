@@ -47,6 +47,7 @@ def test_monster_injure(fontinit):
     assert m.health == 0
     assert not m.alive()
 
+
 def test_monster_status_message(fontinit):
     m = monster.Orc()
     m.health = 1234

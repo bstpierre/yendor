@@ -25,7 +25,7 @@ class Monster(pygame.sprite.Sprite):
         # method to set it.
         self.coord = coord.Coord(0, 0)
 
-        self.velocity = velocity.Velocity(30, coord.SOUTH) # XXX
+        self.velocity = velocity.Velocity(30, coord.SOUTH)  # XXX
         self.money = self.health / 5
 
     @property
@@ -69,11 +69,10 @@ class Monster(pygame.sprite.Sprite):
             self.kill()
             return
         else:
-            goal = self.path[0]
             goal_cc = self.grid.grid_coord_to_client(self.path[0])
             mc_round = coord.Coord(int(self.coord.x),
                                    int(self.coord.y))
-            if mc_round.distance(goal_cc) < 2: # XXX
+            if mc_round.distance(goal_cc) < 2:  # XXX
                 self.path.pop(0)
                 if len(self.path) == 0:
                     print("SMASH BASE (update2)")

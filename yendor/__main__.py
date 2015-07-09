@@ -1,20 +1,13 @@
 #!/usr/bin/python
 
-import sys
-
 import pygame
 import pygame.freetype
 
 from . import (
-    bullet,
-    coord,
     gamestate,
     grid,
-    monster,
-    tower,
-    velocity,
-    wave,
     )
+
 
 def main(args=None):
     """The main routine."""
@@ -35,7 +28,7 @@ def main(args=None):
     clock = pygame.time.Clock()
 
     gs = gamestate.GameState(clock=clock)
-    g = grid.Grid(gs)
+    grid.Grid(gs)
 
     font = pygame.font.Font(None, 18)
 
@@ -46,7 +39,7 @@ def main(args=None):
         screen.fill(WHITE)
 
         # Draw wave status.
-        text_x = grid.GRID_WIDTH + 20 # XXX
+        text_x = grid.GRID_WIDTH + 20  # XXX
         text_y = 20
         for msg in gs.status_message():
             text = font.render(msg, True, BLACK)

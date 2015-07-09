@@ -14,7 +14,7 @@ BASE_HEIGHT = 32
 
 class Grid:
     def __init__(self, gs):
-        self.cell_size = 32 # each grid cell occupies X*Y pixels
+        self.cell_size = 32  # each grid cell occupies X*Y pixels
         assert self.cell_size == BASE_HEIGHT
         assert BASE_WIDTH == BASE_HEIGHT
 
@@ -66,8 +66,8 @@ class Grid:
         # Track locations of monsters.
         locs = set()
         if (self.gs and
-            self.gs.dungeon and
-            self.gs.dungeon.spawn_origin):
+                self.gs.dungeon and
+                self.gs.dungeon.spawn_origin):
             locs.add(self.gs.dungeon.spawn_origin)
         for m in self.gs.monsters:
             gc = self.client_coord_to_grid(m.center)
