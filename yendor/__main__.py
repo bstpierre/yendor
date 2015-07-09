@@ -34,9 +34,7 @@ def main(args=None):
 
     clock = pygame.time.Clock()
 
-    waves = [wave.Wave(monster.Dwarf, 5, 2.0),
-             wave.Wave(monster.Orc, 2, 4.0)]
-    gs = gamestate.GameState(clock=clock, waves=waves)
+    gs = gamestate.GameState(clock=clock)
     g = grid.Grid(gs)
 
     font = pygame.font.Font(None, 18)
