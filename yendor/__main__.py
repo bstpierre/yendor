@@ -28,7 +28,6 @@ def main(args=None):
     clock = pygame.time.Clock()
 
     gs = gamestate.GameState(clock=clock)
-    grid.Grid(gs)
 
     font = pygame.font.Font(None, 18)
 

@@ -12,20 +12,21 @@ MONSTER_HEIGHT = 32
 
 
 class Monster(pygame.sprite.Sprite):
-    def __init__(self, code='?'):
+    def __init__(self, start, end, grid, code='?'):
         super().__init__()
         self._set_image(code)
         self.width = MONSTER_WIDTH
         self.height = MONSTER_HEIGHT
         self.radius = self.width
         self.path = []
-        self.grid = None
-
-        # FIXME - Coord will be set by GameState; should provide
-        # method to set it.
-        self.coord = coord.Coord(0, 0)
 
         self.velocity = velocity.Velocity(30, coord.SOUTH)  # XXX
+        self.grid = grid
+        self.coord = self.grid.grid_coord_to_client(start)
+        self.start = start
+        self.end = end
+        self.update_path()
+
         self.money = self.health / 5
 
     @property
@@ -80,10 +81,9 @@ class Monster(pygame.sprite.Sprite):
                     return
         self._head_to_goal()
 
-    def update_path(self, grid):
-        self.grid = grid
-        my_gc = grid.client_coord_to_grid(self.center)
-        self.path = grid.path(my_gc, grid.gs.dungeon.base)
+    def update_path(self):
+        my_gc = self.grid.client_coord_to_grid(self.center)
+        self.path = self.grid.path(my_gc, self.end)
         if self.path:
             assert my_gc == self.path[0]
             self.path.pop(0)
@@ -100,16 +100,22 @@ class Monster(pygame.sprite.Sprite):
             self.kill()
 
 
+class Gnome(Monster):
+    def __init__(self, *args, **kwargs):
+        self.health = 7
+        super().__init__(*args, code='G', **kwargs)
+
+
 class Dwarf(Monster):
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         self.health = 10
-        super().__init__(code='D')
+        super().__init__(*args, code='D', **kwargs)
 
 
 class Orc(Monster):
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         self.health = 25
-        super().__init__(code='O')
+        super().__init__(*args, code='O', **kwargs)
 
 monsters = {n: g for (n, g) in globals().items() if (
     type(g) == type(Monster) and

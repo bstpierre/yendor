@@ -1,12 +1,11 @@
 #!/usr/bin/python
 
-import copy
-
 import pygame
 
 from . import (
     coord,
     dungeon,
+    grid,
     monster,
     tower,
     )
@@ -22,7 +21,7 @@ class GameState:
         self.monsters = pygame.sprite.Group()
         self.towers = pygame.sprite.Group()
         self.clickables = pygame.sprite.Group()
-        self.grid = None
+        self.grid = grid.Grid(self)
         self.running = True
         self.paused = False
         self.placing_group = pygame.sprite.Group()
@@ -31,11 +30,13 @@ class GameState:
         # XXX - move logic from main into here.
         self.selected = None
 
-        # Initial money.
-        self.money = 30
+        # Initial money (will get 25 more when loading the first level below).
+        self.money = 5
 
         # Load dungeon when grid gets set.
         self.dungeon = None
+        self.dungeon_level = 1
+        self._load_dungeon()
 
     @property
     def rect(self):
@@ -51,10 +52,26 @@ class GameState:
         msgs.append("${}".format(self.money))
         return msgs
 
-    def set_grid(self, g):
-        self.grid = g
-        if self.dungeon is None:
-            self.dungeon = dungeon.Dungeon.load(self, 'levels/1.dungeon')
+    def _load_dungeon(self):
+        if self.dungeon_level < 0:  # FIXME: handle game-over
+            return
+
+        self.grid = grid.Grid(self)
+        self.bullets.empty()
+        self.monsters.empty()
+        self.towers.empty()
+        self.clickables.empty()
+        self.placing_group.empty()
+
+        filename = 'levels/{}.dungeon'.format(self.dungeon_level)
+        try:
+            self.dungeon = dungeon.Dungeon.load(self, filename)
+        except IOError:
+            print("GAME OVER")
+            self.dungeon_level = -1  # FIXME: handle game-over
+            return
+        self.money += self.dungeon_level * 25
+        self.dungeon_level += 1
 
     @property
     def seconds(self):
@@ -86,7 +103,7 @@ class GameState:
                     self.running = False
                 elif event.key in [pygame.K_m]:
                     m = self.spawn_monster(monster.Orc)
-                    m.update_path(self.grid)
+                    m.update_path()
                 elif event.key == pygame.K_p:
                     self.paused = not self.paused
                 elif event.key in [pygame.K_t]:
@@ -144,6 +161,9 @@ class GameState:
         dt = self.clock.tick(self.fps)
         self.ticks = pygame.time.get_ticks()
 
+        if not self.dungeon.active and len(self.monsters.sprites()) == 0:
+            self._load_dungeon()
+
         self.bullets.update(dt)
         self.monsters.update(dt)
         self.towers.update(self)
@@ -197,9 +217,7 @@ class GameState:
                 self.clickables.add(t)
 
     def spawn_monster(self, cls):
-        m = cls()
-        m.coord = copy.copy(self.dungeon.spawn_origin)
-        m.update_path(self.grid)
+        m = cls(self.dungeon.spawn_origin, self.dungeon.base, self.grid)
         self.add_monster(m)
         return m
 

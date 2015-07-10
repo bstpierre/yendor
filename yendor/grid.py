@@ -23,7 +23,6 @@ class Grid:
         self.obstacles = set()
 
         self.gs = gs
-        self.gs.set_grid(self)
 
     def draw(self, screen):
         BLACK = (0, 0, 0)
@@ -88,7 +87,7 @@ class Grid:
                 return False
 
         for m in self.gs.monsters:
-            m.update_path(self)
+            m.update_path()
 
         return True
 

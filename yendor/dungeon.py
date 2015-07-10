@@ -16,6 +16,7 @@ class Dungeon:
         self.spawn_origin = coord.Coord(0, 0)
         self.base = coord.Coord(0, 0)
         self.cur_wave = 0
+        self.active = True
 
     def status_message(self):
         """Returns strings containing user-facing game status."""
@@ -41,6 +42,8 @@ class Dungeon:
                 self.cur_wave += 1
                 if self.cur_wave < len(self.waves):
                     self.waves[self.cur_wave].start(gs.seconds)
+                else:
+                    self.active = False
 
     @staticmethod
     def load(gs, filename):
