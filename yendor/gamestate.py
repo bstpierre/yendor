@@ -14,6 +14,7 @@ from . import (
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         self.rect = pygame.Rect(0, 0, 5, 5)
+        self.health = 100
 
 
 class GameState:
@@ -55,7 +56,8 @@ class GameState:
         """Returns strings containing user-facing game status."""
         msgs = []
         msgs.append(self.dungeon.status_message())
-        msgs.append("${}".format(self.money))
+        msgs.append("${}, Health: {}".format(self.money,
+                                             self.player.health))
         return msgs
 
     def _load_dungeon(self):
@@ -158,16 +160,41 @@ class GameState:
                     self.placing_tower.rect.y = aligned.y
 
     def update(self):
+        if self.paused:
+            # FIXME: this isn't quite right. Still need to deal with
+            # ticks, need to not count paused time.
+            return
+
         # Limit FPS
         dt = self.clock.tick(self.fps)
         self.ticks = pygame.time.get_ticks()
 
         if not self.dungeon.active and len(self.monsters.sprites()) == 0:
             self._load_dungeon()
+            return
 
         self.bullets.update(dt)
         self.monsters.update(dt)
         self.towers.update(self)
+
+        # XXX
+        class Base(pygame.sprite.Sprite):
+            def __init__(self, c):
+                super().__init__()
+                self.rect = pygame.Rect(c.x, c.y, 32, 32)
+
+        base = Base(self.grid.grid_coord_to_client(self.dungeon.base))
+
+        # Check for monsters at base.
+        smashers = pygame.sprite.spritecollide(
+            base, self.monsters, False)
+        for m in smashers:
+            self.player.health -= m.damage
+            m.kill()
+            if self.player.health <= 0:
+                print("YOU ARE DEAD! GAME OVER")
+                self.paused = True
+                return
 
         # Injure monsters with bullets.
         hits = pygame.sprite.groupcollide(self.bullets,

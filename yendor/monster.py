@@ -103,18 +103,21 @@ class Monster(pygame.sprite.Sprite):
 class Gnome(Monster):
     def __init__(self, *args, **kwargs):
         self.health = 7
+        self.damage = 4
         super().__init__(*args, code='G', **kwargs)
 
 
 class Dwarf(Monster):
     def __init__(self, *args, **kwargs):
         self.health = 10
+        self.damage = 8
         super().__init__(*args, code='D', **kwargs)
 
 
 class Orc(Monster):
     def __init__(self, *args, **kwargs):
         self.health = 25
+        self.damage = 10
         super().__init__(*args, code='O', **kwargs)
 
 monsters = {n: g for (n, g) in globals().items() if (

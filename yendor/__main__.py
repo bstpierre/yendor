@@ -5,7 +5,6 @@ import pygame.freetype
 
 from . import (
     gamestate,
-    grid,
     )
 
 

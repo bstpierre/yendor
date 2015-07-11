@@ -38,6 +38,9 @@ def test_gamestate_update_monster_kill_money():
         groupcollide.side_effect = groupcollide_called
         gs = gamestate.GameState(clock)
         gs.dungeon = Mock()
+        gs.dungeon.base = Mock()
+        gs.dungeon.base.x = 0
+        gs.dungeon.base.y = 0
         assert gs.money == initial_money
         gs.update()
         assert gs.money == initial_money + m.money
