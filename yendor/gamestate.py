@@ -11,6 +11,11 @@ from . import (
     )
 
 
+class Player(pygame.sprite.Sprite):
+    def __init__(self):
+        self.rect = pygame.Rect(0, 0, 5, 5)
+
+
 class GameState:
     fps = 30
 
@@ -26,6 +31,7 @@ class GameState:
         self.paused = False
         self.placing_group = pygame.sprite.Group()
         self.placing_tower = None
+        self.player = Player()
 
         # XXX - move logic from main into here.
         self.selected = None
@@ -138,15 +144,10 @@ class GameState:
                     self.placing_group.empty()
                     self.placing_tower = None
                 else:
-                    # FIXME
-                    class Player(pygame.sprite.Sprite):
-                        def __init__(self):
-                            self.rect = pygame.Rect(event.pos[0],
-                                                    event.pos[1],
-                                                    5, 5)
-                    p = Player()
+                    self.player.rect.x = event.pos[0]
+                    self.player.rect.y = event.pos[1]
                     clicked = pygame.sprite.spritecollide(
-                        p, self.clickables, False)
+                        self.player, self.clickables, False)
                     if clicked:
                         self.selected = clicked[0]
             elif event.type == pygame.MOUSEMOTION:
@@ -222,6 +223,24 @@ class GameState:
         return m
 
     def draw(self, screen):
+        BLACK = (0, 0, 0)
+
+        font = pygame.font.Font(None, 18)
+
+        # Draw wave status.
+        text_x = grid.GRID_WIDTH + 20  # XXX
+        text_y = 20
+        for msg in self.status_message():
+            text = font.render(msg, True, BLACK)
+            screen.blit(text, [text_x, text_y])
+            text_y += 20
+
+        if self.selected is not None:
+            text = font.render(self.selected.status_message(self),
+                               True, BLACK)
+            text_y = 100
+            screen.blit(text, [text_x, text_y])
+
         self.grid.draw(screen)
         self.bullets.draw(screen)
         self.monsters.draw(screen)

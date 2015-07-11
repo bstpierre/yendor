@@ -19,7 +19,6 @@ def main(args=None):
     pygame.freetype.init()
 
     WHITE = (255, 255, 255)
-    BLACK = (0, 0, 0)
 
     size = (800, 480)
     screen = pygame.display.set_mode(size)
@@ -29,26 +28,11 @@ def main(args=None):
 
     gs = gamestate.GameState(clock=clock)
 
-    font = pygame.font.Font(None, 18)
-
     while gs.active():
         gs.handle_events()
         gs.update()
 
         screen.fill(WHITE)
-
-        # Draw wave status.
-        text_x = grid.GRID_WIDTH + 20  # XXX
-        text_y = 20
-        for msg in gs.status_message():
-            text = font.render(msg, True, BLACK)
-            screen.blit(text, [text_x, text_y])
-            text_y += 20
-
-        if gs.selected is not None:
-            text = font.render(gs.selected.status_message(gs), True, BLACK)
-            text_y = 100
-            screen.blit(text, [text_x, text_y])
 
         gs.draw(screen)
         pygame.display.flip()
