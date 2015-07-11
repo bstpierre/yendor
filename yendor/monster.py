@@ -27,7 +27,7 @@ class Monster(pygame.sprite.Sprite):
         self.end = end
         self.update_path()
 
-        self.money = self.health / 5
+        self.money = int(self.health / 5)
 
     @property
     def center(self):
