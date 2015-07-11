@@ -181,21 +181,16 @@ class GameState:
                     self.money += m.money
                 break
 
+        loaded = [t for t in self.towers.sprites() if t.loaded]
+
         # Fire the towers.
-        # XXX - should filter out the walls (i.e towers that can't fire).
         in_range = pygame.sprite.groupcollide(
-            self.towers, self.monsters, False, False,
+            loaded, self.monsters, False, False,
             collided=pygame.sprite.collide_circle)
         for t, ms in in_range.items():
-            # FIXME: only check 'ready' tower group for collisions
-            if not t.loaded:
-                continue
-            for m in ms:
-                b = t.fire(m, self.seconds)
-                if b:
-                    self.add_bullet(b)
-                # XXX tower only fires at one monster
-                break
+            b = t.fire(ms, self.seconds)
+            if b:
+                self.add_bullet(b)
 
         self.dungeon.update(self)
 

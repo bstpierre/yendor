@@ -55,10 +55,17 @@ class Tower(pygame.sprite.Sprite):
         if self.last_fired + self.rate < gs.seconds:
             self.loaded = True
 
-    def fire(self, monster, seconds):
+    def fire(self, monsters, seconds):
+        assert len(monsters) > 0
+        target = monsters[0]
+        # XXX - move this "algorithm" into a Targeting class
+        for m in monsters:
+            if len(m.path) < len(target.path):
+                target = m
+
         self.loaded = False
         self.last_fired = seconds
-        mc = monster.center
+        mc = target.center
         tc = self.center
         bearing = tc.bearing(mc)
         v = velocity.Velocity(speed=600, direction=bearing)
@@ -81,6 +88,10 @@ class Wall(Tower):
         super().__init__(bullet_factory=None,
                          code='', color=BROWN)
         self.radius = 0  # range
+        self.loaded = False
+
+    def update(self, gs):
+        pass
 
     def fire(self, monster, ticks):
         return None
