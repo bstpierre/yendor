@@ -82,6 +82,12 @@ class GameState:
         self.money += self.dungeon_level * 25
         self.dungeon_level += 1
 
+    def _reload_dungeon(self):
+        # XXX - this is a hack, because _load_dungeon() increments the
+        # level.
+        self.dungeon_level -= 1
+        self._load_dungeon()
+
     @property
     def seconds(self):
         return self.time.ticks / 1000.0
@@ -99,7 +105,7 @@ class GameState:
                 elif event.key in [pygame.K_m]:
                     m = self.spawn_monster(monster.Orc)
                     m.update_path()
-                elif event.key == pygame.K_p:
+                elif event.key in [pygame.K_p, pygame.K_SPACE]:
                     if self.paused:
                         self.paused = False
                         self.time.resume()
@@ -109,6 +115,8 @@ class GameState:
                 elif event.key == pygame.K_d:
                     import pdb
                     pdb.set_trace()
+                elif event.key == pygame.K_r:
+                    self._reload_dungeon()
                 elif event.key in [pygame.K_t]:
                     if self.placing_tower is None:
                         self.selected = None
