@@ -90,21 +90,6 @@ class GameState:
         return self.running
 
     def handle_events(self):
-        # FIXME: rework pause handling so that towers can be
-        # placed/upgraded while paused -- but monsters don't move and
-        # time doesn't advance while paused.
-        if self.paused:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.running = False
-                elif event.type == pygame.KEYDOWN:
-                    if event.key in [pygame.K_q, pygame.K_ESCAPE]:
-                        self.running = False
-                    elif event.key == pygame.K_p:
-                        self.paused = False
-                        self.time.resume()
-            return
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
@@ -115,8 +100,12 @@ class GameState:
                     m = self.spawn_monster(monster.Orc)
                     m.update_path()
                 elif event.key == pygame.K_p:
-                    self.paused = True
-                    self.time.pause()
+                    if self.paused:
+                        self.paused = False
+                        self.time.resume()
+                    else:
+                        self.paused = True
+                        self.time.pause()
                 elif event.key == pygame.K_d:
                     import pdb
                     pdb.set_trace()
