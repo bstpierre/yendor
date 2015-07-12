@@ -122,6 +122,24 @@ class GameState:
                     else:
                         self.placing_tower.kill()
                         self.placing_tower = None
+                elif event.key in [pygame.K_u]:
+                    if (self.selected is None or
+                            not isinstance(self.selected,
+                                           tower.Tower)):
+                        return
+                    t = self.selected
+                    uc = t.upgrade_cost()
+                    print("Upgrade tower {} for {}".format(
+                        t.level, uc))
+                    if uc is None:
+                        print("No upgrade available")
+                        return
+                    if uc > self.money:
+                        print("Not enough money")
+                        return
+                    self.money -= uc
+                    t.upgrade()
+
                 elif event.key in [pygame.K_w]:
                     if self.placing_tower is None:
                         self.selected = None

@@ -25,3 +25,7 @@ class Bullet(pygame.sprite.Sprite):
         r.x = self.coord.x
         r.y = self.coord.y
         return r
+
+
+class BetterBullet(Bullet):
+    damage = 3

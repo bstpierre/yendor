@@ -18,6 +18,8 @@ BROWN = (135, 80, 25)
 class Tower(pygame.sprite.Sprite):
     def __init__(self, bullet_factory, code='?', color=BLUE):
         super().__init__()
+        self.code = code
+        self.color = color
         self._set_image(code, color)
         self.rect = self.image.get_rect()
         self.radius = 100  # range
@@ -25,6 +27,7 @@ class Tower(pygame.sprite.Sprite):
         self.last_fired = 0
         self.loaded = True
         self.bullet_factory = bullet_factory
+        self.level = 1
 
     @property
     def center(self):
@@ -72,13 +75,26 @@ class Tower(pygame.sprite.Sprite):
         b = self.bullet_factory(velocity=v, coord=tc)
         return b
 
+    def upgrade_cost(self):
+        if self.level <= len(self.upgrade_costs):
+            return self.upgrade_costs[self.level - 1]
+        return None
+
 
 class Slingshot(Tower):
     cost = 20
+    upgrade_costs = [10]
 
     def __init__(self):
         super().__init__(bullet_factory=bullet.Bullet,
                          code='S1', color=BLUE)
+
+    def upgrade(self):
+        self.level += 1
+        # FIXME: do this right
+        self.bullet_factory = bullet.BetterBullet
+        self.code = 'S{}'.format(self.level)
+        self._set_image(self.code, self.color)
 
 
 class Wall(Tower):
