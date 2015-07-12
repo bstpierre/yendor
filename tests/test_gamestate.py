@@ -41,6 +41,8 @@ def test_gamestate_update_monster_kill_money():
         gs.dungeon.base = Mock()
         gs.dungeon.base.x = 0
         gs.dungeon.base.y = 0
+        gs.clock = Mock()
+        gs.clock.tick.return_value = 33
         assert gs.money == initial_money
         gs.update()
         assert gs.money == initial_money + m.money

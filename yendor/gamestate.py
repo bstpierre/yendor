@@ -7,6 +7,7 @@ from . import (
     dungeon,
     grid,
     monster,
+    timer,
     tower,
     )
 
@@ -21,7 +22,7 @@ class GameState:
     fps = 30
 
     def __init__(self, clock):
-        self.ticks = 0
+        self.time = timer.Timer()
         self.clock = clock
         self.bullets = pygame.sprite.Group()
         self.monsters = pygame.sprite.Group()
@@ -83,7 +84,7 @@ class GameState:
 
     @property
     def seconds(self):
-        return self.ticks / 1000.0
+        return self.time.ticks / 1000.0
 
     def active(self):
         return self.running
@@ -101,6 +102,7 @@ class GameState:
                         self.running = False
                     elif event.key == pygame.K_p:
                         self.paused = False
+                        self.time.resume()
             return
 
         for event in pygame.event.get():
@@ -113,7 +115,11 @@ class GameState:
                     m = self.spawn_monster(monster.Orc)
                     m.update_path()
                 elif event.key == pygame.K_p:
-                    self.paused = not self.paused
+                    self.paused = True
+                    self.time.pause()
+                elif event.key == pygame.K_d:
+                    import pdb
+                    pdb.set_trace()
                 elif event.key in [pygame.K_t]:
                     if self.placing_tower is None:
                         self.selected = None
@@ -161,13 +167,15 @@ class GameState:
 
     def update(self):
         if self.paused:
-            # FIXME: this isn't quite right. Still need to deal with
-            # ticks, need to not count paused time.
+            # XXX - still want to be able to place towers while paused.
             return
 
         # Limit FPS
         dt = self.clock.tick(self.fps)
-        self.ticks = pygame.time.get_ticks()
+
+        if dt > 100:
+            # Don't jump forward too much.
+            return
 
         if not self.dungeon.active and len(self.monsters.sprites()) == 0:
             self._load_dungeon()
