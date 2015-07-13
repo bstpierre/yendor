@@ -86,15 +86,24 @@ class Slingshot(Tower):
     upgrade_costs = [10]
 
     def __init__(self):
-        super().__init__(bullet_factory=bullet.Bullet,
+        super().__init__(bullet_factory=bullet.Stone,
                          code='S1', color=BLUE)
 
     def upgrade(self):
         self.level += 1
         # FIXME: do this right
-        self.bullet_factory = bullet.BetterBullet
+        self.bullet_factory = bullet.Flint
         self.code = 'S{}'.format(self.level)
         self._set_image(self.code, self.color)
+
+
+class DartTower(Tower):
+    cost = 35
+    upgrade_costs = []
+
+    def __init__(self):
+        super().__init__(bullet_factory=bullet.Dart,
+                         code='D1', color=BLUE)
 
 
 class Wall(Tower):

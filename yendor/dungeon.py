@@ -70,8 +70,6 @@ class Dungeon:
                     gs.add_tower(wall)
                 elif ch == '<':
                     d.spawn_origin = copy.copy(gc)
-                    print("spawn_origin {}".format(d.spawn_origin))
                 elif ch == '>':
                     d.base = copy.copy(gc)
-                    print("base {}".format(d.base))
         return d

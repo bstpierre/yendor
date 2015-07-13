@@ -75,11 +75,11 @@ def test_monster_injure(fontinit):
     g.add(m)
     assert m.alive()
 
-    assert m.health == 25
+    assert m.health == 30
     m.injure(24)
-    assert m.health == 1
+    assert m.health == 6
     assert m.alive()
-    m.injure(1)
+    m.injure(6)
     assert m.health == 0
     assert not m.alive()
 

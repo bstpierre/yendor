@@ -9,6 +9,7 @@ from . import (
     monster,
     timer,
     tower,
+    tower_selector,
     )
 
 
@@ -34,6 +35,7 @@ class GameState:
         self.placing_group = pygame.sprite.Group()
         self.placing_tower = None
         self.player = Player()
+        self.ts = tower_selector.TowerSelector()
 
         # XXX - move logic from main into here.
         self.selected = None
@@ -120,13 +122,14 @@ class GameState:
                 elif event.key in [pygame.K_t]:
                     if self.placing_tower is None:
                         self.selected = None
-                        self.placing_tower = tower.Slingshot()
-                        pos = pygame.mouse.get_pos()
-                        cc = coord.Coord(pos[0], pos[1])
-                        aligned = self.grid.client_coord_aligned(cc)
-                        self.placing_tower.rect.x = aligned.x
-                        self.placing_tower.rect.y = aligned.y
-                        self.placing_group.add(self.placing_tower)
+                        if self.ts.selected_tower is not None:
+                            self.placing_tower = self.ts.selected_tower()
+                            pos = pygame.mouse.get_pos()
+                            cc = coord.Coord(pos[0], pos[1])
+                            aligned = self.grid.client_coord_aligned(cc)
+                            self.placing_tower.rect.x = aligned.x
+                            self.placing_tower.rect.y = aligned.y
+                            self.placing_group.add(self.placing_tower)
                     else:
                         self.placing_tower.kill()
                         self.placing_tower = None
@@ -162,7 +165,10 @@ class GameState:
                         self.placing_tower.kill()
                         self.placing_tower = None
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if self.placing_tower is not None:
+                if self.ts.rect.collidepoint(event.pos[0],
+                                             event.pos[1]):
+                    self.ts.handle_click(event)
+                elif self.placing_tower is not None:
                     self.add_tower(self.placing_tower)
                     self.placing_group.empty()
                     self.placing_tower = None
@@ -291,3 +297,5 @@ class GameState:
         self.monsters.draw(screen)
         self.towers.draw(screen)
         self.placing_group.draw(screen)
+
+        self.ts.draw(screen)

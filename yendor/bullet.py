@@ -4,7 +4,7 @@ import pygame
 
 
 class Bullet(pygame.sprite.Sprite):
-    damage = 2
+    damage = 0
 
     def __init__(self, velocity, coord):
         super().__init__()
@@ -27,5 +27,13 @@ class Bullet(pygame.sprite.Sprite):
         return r
 
 
-class BetterBullet(Bullet):
+class Stone(Bullet):
+    damage = 2
+
+
+class Flint(Bullet):
     damage = 3
+
+
+class Dart(Bullet):
+    damage = 4
