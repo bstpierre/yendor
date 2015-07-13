@@ -40,8 +40,8 @@ class GameState:
         # XXX - move logic from main into here.
         self.selected = None
 
-        # Initial money (will get 25 more when loading the first level below).
-        self.money = 5
+        # Initial money (will get 10 more when loading the first level below).
+        self.money = 20
 
         # Load dungeon when grid gets set.
         self.dungeon = None
@@ -81,12 +81,17 @@ class GameState:
             print("GAME OVER")
             self.dungeon_level = -1  # FIXME: handle game-over
             return
-        self.money += self.dungeon_level * 25
+
+        # Give player at least 20 + (10*dlevel)
+        self.money = max(self.money, 20)
+        self.money += self.dungeon_level * 10
+
         self.dungeon_level += 1
 
     def _reload_dungeon(self):
         # XXX - this is a hack, because _load_dungeon() increments the
         # level.
+        self.money = 20
         self.dungeon_level -= 1
         self._load_dungeon()
 
@@ -240,10 +245,18 @@ class GameState:
         loaded = [t for t in self.towers.sprites() if t.loaded]
 
         # Fire the towers.
+        if (self.selected is not None and
+                isinstance(self.selected, monster.Monster)):
+            selected_monster = self.selected
+        else:
+            selected_monster = None
         in_range = pygame.sprite.groupcollide(
             loaded, self.monsters, False, False,
             collided=pygame.sprite.collide_circle)
         for t, ms in in_range.items():
+            if selected_monster in ms:
+                # Force firing at the selected monster.
+                ms = [selected_monster]
             b = t.fire(ms, self.seconds)
             if b:
                 self.add_bullet(b)
@@ -293,9 +306,9 @@ class GameState:
             screen.blit(text, [text_x, text_y])
 
         self.grid.draw(screen)
-        self.bullets.draw(screen)
         self.monsters.draw(screen)
         self.towers.draw(screen)
+        self.bullets.draw(screen)
         self.placing_group.draw(screen)
 
         self.ts.draw(screen)

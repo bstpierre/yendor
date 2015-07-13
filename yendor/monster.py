@@ -124,6 +124,14 @@ class Gnome(Monster):
         super().__init__(*args, code='G', **kwargs)
 
 
+class Orc(Monster):
+    level = 3
+
+    def __init__(self, *args, **kwargs):
+        self.damage = 10
+        super().__init__(*args, code='O', **kwargs)
+
+
 class Dwarf(Monster):
     level = 4
 
@@ -132,12 +140,13 @@ class Dwarf(Monster):
         super().__init__(*args, code='D', **kwargs)
 
 
-class Orc(Monster):
-    level = 3
+class Lizard(Monster):
+    level = 5
 
     def __init__(self, *args, **kwargs):
-        self.damage = 10
-        super().__init__(*args, code='O', **kwargs)
+        self.damage = 6
+        super().__init__(*args, code=':', **kwargs)
+
 
 monsters = {n: g for (n, g) in globals().items() if (
     type(g) == type(Monster) and
