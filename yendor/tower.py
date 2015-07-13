@@ -50,8 +50,9 @@ class Tower(pygame.sprite.Sprite):
         gc = gs.grid.client_coord_to_grid(self.coord)
         msg = '{} @ {}'.format(self.__class__.__name__, gc)
         shots_per_second = float(gs.fps) / float(self.rate)
-        damage_per_second = self.bullet_factory.damage * shots_per_second
-        msg += ', damage/sec: {}'.format(damage_per_second)
+        max_damage = self.bullet_factory.damage_roll[1]
+        damage_per_second = max_damage * shots_per_second
+        msg += ', max damage/sec: {}'.format(damage_per_second)
         return msg
 
     def update(self, gs):

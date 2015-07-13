@@ -4,6 +4,7 @@ import pygame
 
 from . import (
     coord,
+    dice,
     velocity,
     )
 
@@ -14,6 +15,10 @@ MONSTER_HEIGHT = 32
 class Monster(pygame.sprite.Sprite):
     def __init__(self, start, end, grid, code='?'):
         super().__init__()
+
+        # Nethack monster HP == (monster level)d8
+        self.health = dice.roll(self.level, 8)
+
         self._set_image(code)
         self.width = MONSTER_WIDTH
         self.height = MONSTER_HEIGHT
@@ -27,7 +32,10 @@ class Monster(pygame.sprite.Sprite):
         self.end = end
         self.update_path()
 
-        self.money = int(self.health / 5)
+        if dice.chances(1, 5):
+            self.money = dice.roll(self.level, 5)
+        else:
+            self.money = 0
 
     @property
     def center(self):
@@ -52,7 +60,7 @@ class Monster(pygame.sprite.Sprite):
         """Returns string containing user-facing monster status."""
         gc = gs.grid.client_coord_to_grid(self.coord)
         msg = '{} @ {}'.format(self.__class__.__name__, gc)
-        msg += ', health: {}'.format(self.health)
+        msg += ', health: {}, gold: {}'.format(self.health, self.money)
         return msg
 
     def _head_to_goal(self):
@@ -100,23 +108,34 @@ class Monster(pygame.sprite.Sprite):
             self.kill()
 
 
-class Gnome(Monster):
+class Jackal(Monster):
+    level = 1
+
     def __init__(self, *args, **kwargs):
-        self.health = 10
+        self.damage = 4
+        super().__init__(*args, code='d', **kwargs)
+
+
+class Gnome(Monster):
+    level = 3
+
+    def __init__(self, *args, **kwargs):
         self.damage = 4
         super().__init__(*args, code='G', **kwargs)
 
 
 class Dwarf(Monster):
+    level = 4
+
     def __init__(self, *args, **kwargs):
-        self.health = 15
         self.damage = 8
         super().__init__(*args, code='D', **kwargs)
 
 
 class Orc(Monster):
+    level = 3
+
     def __init__(self, *args, **kwargs):
-        self.health = 30
         self.damage = 10
         super().__init__(*args, code='O', **kwargs)
 

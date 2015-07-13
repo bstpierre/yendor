@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 import pygame
 import pygame.freetype
@@ -71,17 +71,19 @@ def test_monster_injure(fontinit):
     grid.client_coord_to_grid.side_effect = cc_to_gc
     grid.path.return_value = [start, start.south()]
 
-    m = monster.Orc(start, end, grid)
-    g.add(m)
-    assert m.alive()
+    with patch.object(monster.dice, 'roll') as roll:
+        roll.return_value = 18
+        m = monster.Orc(start, end, grid)
+        g.add(m)
+        assert m.alive()
 
-    assert m.health == 30
-    m.injure(24)
-    assert m.health == 6
-    assert m.alive()
-    m.injure(6)
-    assert m.health == 0
-    assert not m.alive()
+        assert m.health == 18
+        m.injure(12)
+        assert m.health == 6
+        assert m.alive()
+        m.injure(6)
+        assert m.health == 0
+        assert not m.alive()
 
 
 def test_monster_status_message(fontinit):

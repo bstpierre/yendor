@@ -2,12 +2,17 @@
 
 import pygame
 
+from . import (
+    dice,
+    )
+
 
 class Bullet(pygame.sprite.Sprite):
-    damage = 0
+    # Subclass must provide self.damage_roll = (qty, sides)
 
     def __init__(self, velocity, coord):
         super().__init__()
+        self.damage = dice.roll(*self.damage_roll)
         self.velocity = velocity
         self.image = pygame.Surface([5, 5])
         self.image.fill((200, 0, 0))
@@ -28,12 +33,14 @@ class Bullet(pygame.sprite.Sprite):
 
 
 class Stone(Bullet):
-    damage = 2
+    # Damage is 1d6
+    # XXX - should wrap this into dice.Roll or DiceSpec
+    damage_roll = (1, 3)
 
 
 class Flint(Bullet):
-    damage = 3
+    damage_roll = (1, 6)
 
 
 class Dart(Bullet):
-    damage = 4
+    damage_roll = (2, 3)

@@ -15,7 +15,7 @@ def assert_almost_equals(a, b):
 def test_bullet_update_east():
     v = velocity.Velocity(1000, coord.EAST)
     c = coord.Coord(100, 100)
-    b = bullet.Bullet(v, c)
+    b = bullet.Stone(v, c)
 
     # Each tick is 1ms, so divide velocity by 1000.
     b.update(10)
@@ -26,7 +26,7 @@ def test_bullet_update_east():
 def test_bullet_update_north():
     v = velocity.Velocity(1000, coord.NORTH)
     c = coord.Coord(100, 100)
-    b = bullet.Bullet(v, c)
+    b = bullet.Flint(v, c)
 
     # Each tick is 1ms, so divide velocity by 1000.
     b.update(10)
