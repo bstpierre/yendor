@@ -85,6 +85,7 @@ class Tower(pygame.sprite.Sprite):
 class Slingshot(Tower):
     cost = 20
     upgrade_costs = [10]
+    name = "Slingshot"
 
     def __init__(self):
         super().__init__(bullet_factory=bullet.Stone,
@@ -101,6 +102,7 @@ class Slingshot(Tower):
 class DartTower(Tower):
     cost = 35
     upgrade_costs = []
+    name = "Dart"
 
     def __init__(self):
         super().__init__(bullet_factory=bullet.Dart,

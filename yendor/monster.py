@@ -19,6 +19,9 @@ class Monster(pygame.sprite.Sprite):
         # Nethack monster HP == (monster level)d8
         self.health = dice.roll(self.level, 8)
 
+        # Nethack XP == (ML)*(ML+6)+1
+        self.xp = self.level * (self.level + 6) + 1
+
         self._set_image(code)
         self.width = MONSTER_WIDTH
         self.height = MONSTER_HEIGHT
@@ -32,7 +35,7 @@ class Monster(pygame.sprite.Sprite):
         self.end = end
         self.update_path()
 
-        if dice.chances(1, 5):
+        if dice.chances(2, 5):
             self.money = dice.roll(self.level, 5)
         else:
             self.money = 0

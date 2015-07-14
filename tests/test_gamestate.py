@@ -24,6 +24,7 @@ def test_gamestate_update_monster_kill_money():
     m = Mock()
     m.alive.return_value = False
     m.money = 10
+    m.xp = 5
     initial_money = 30
 
     with patch.object(pygame.sprite, 'groupcollide') as groupcollide:

@@ -6,6 +6,7 @@ from . import (
     coord,
     dungeon,
     grid,
+    level,
     monster,
     timer,
     tower,
@@ -17,6 +18,7 @@ class Player(pygame.sprite.Sprite):
     def __init__(self):
         self.rect = pygame.Rect(0, 0, 5, 5)
         self.health = 100
+        self.xp = 0
 
 
 class GameState:
@@ -35,9 +37,10 @@ class GameState:
         self.placing_group = pygame.sprite.Group()
         self.placing_tower = None
         self.player = Player()
-        self.ts = tower_selector.TowerSelector()
 
-        # XXX - move logic from main into here.
+        lvl = level.get_level(self.player.xp)
+        self.ts = tower_selector.TowerSelector(lvl.towers)
+
         self.selected = None
 
         # Initial money (will get 10 more when loading the first level below).
@@ -59,8 +62,8 @@ class GameState:
         """Returns strings containing user-facing game status."""
         msgs = []
         msgs.append(self.dungeon.status_message())
-        msgs.append("${}, Health: {}".format(self.money,
-                                             self.player.health))
+        msgs.append("${}, Health: {}, XP: {}".format(
+            self.money, self.player.health, self.player.xp))
         return msgs
 
     def _load_dungeon(self):
@@ -240,6 +243,9 @@ class GameState:
                 m.injure(b.damage)
                 if not m.alive():
                     self.money += m.money
+                    self.player.xp += m.xp
+                    lvl = level.get_level(self.player.xp)
+                    self.ts.set_available(lvl.towers)
                 break
 
         loaded = [t for t in self.towers.sprites() if t.loaded]

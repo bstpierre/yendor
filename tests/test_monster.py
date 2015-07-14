@@ -103,3 +103,28 @@ def test_monster_status_message(fontinit):
     msg = m.status_message(gs)
     assert "Orc @ XYZ" in msg
     assert "health: 1234" in msg
+
+
+def test_monster_has_money_prob(fontinit):
+    start = coord.Coord(0, 0)
+    end = start.south()
+
+    grid = Mock()
+    grid.grid_coord_to_client.side_effect = gc_to_cc
+    grid.client_coord_to_grid.side_effect = cc_to_gc
+
+    def path(*args, **kwargs):
+        return [start, start.south()]
+
+    grid.path.side_effect = path
+
+    ms = [monster.Orc(start, end, grid) for _ in range(1000)]
+    monied = [m for m in ms if m.money > 0]
+
+    # Expect 2/5 to have money, or about 400. (In about a half-dozen
+    # trials this range worked; it's likely that there will be a false
+    # failure at some point, but most trials should fall in this
+    # range. I wrote this test because I was suspicious after playing
+    # that not enough monsters were given gold based on the 2/5 rule.)
+    nmonied = len(monied)
+    assert nmonied > 360 and nmonied < 440
