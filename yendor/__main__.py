@@ -23,9 +23,7 @@ def main(args=None):
     screen = pygame.display.set_mode(size)
     pygame.display.set_caption("Yendor Defender")
 
-    clock = pygame.time.Clock()
-
-    gs = gamestate.GameState(clock=clock)
+    gs = gamestate.GameState()
 
     while gs.active():
         gs.handle_events()

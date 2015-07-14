@@ -22,9 +22,9 @@ class Player(pygame.sprite.Sprite):
 class GameState:
     fps = 30
 
-    def __init__(self, clock):
+    def __init__(self):
         self.time = timer.Timer()
-        self.clock = clock
+        self.clock = pygame.time.Clock()
         self.bullets = pygame.sprite.Group()
         self.monsters = pygame.sprite.Group()
         self.towers = pygame.sprite.Group()

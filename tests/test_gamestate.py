@@ -18,7 +18,6 @@ def fontinit():
 
 
 def test_gamestate_update_monster_kill_money():
-    clock = Mock()
     waves = MagicMock()
     waves.__len__.return_value = 2
     b = Mock()
@@ -36,7 +35,7 @@ def test_gamestate_update_monster_kill_money():
             else:
                 return {}
         groupcollide.side_effect = groupcollide_called
-        gs = gamestate.GameState(clock)
+        gs = gamestate.GameState()
         gs.dungeon = Mock()
         gs.dungeon.base = Mock()
         gs.dungeon.base.x = 0
@@ -53,7 +52,6 @@ def test_gamestate_update_monster_kill_money():
 
 
 def test_gamestate_handle_events_pause_quit():
-    clock = Mock()
     waves = MagicMock()
     waves.__len__.return_value = 2
 
@@ -63,7 +61,7 @@ def test_gamestate_handle_events_pause_quit():
 
         event_get.side_effect = event_get_called
 
-        gs = gamestate.GameState(clock)
+        gs = gamestate.GameState()
         assert not gs.paused
         assert gs.running
 
@@ -85,7 +83,7 @@ def test_gamestate_handle_events_pause_quit():
         assert event_get.call_count == 2
 
         # 'pause' -- p -> paused, p -> unpaused
-        gs = gamestate.GameState(clock)
+        gs = gamestate.GameState()
         event_key_p = Mock()
         event_key_p.type = pygame.KEYDOWN
         event_key_p.key = pygame.K_p
@@ -117,12 +115,11 @@ def test_gamestate_add_tower():
     def towers_add_called(t):
         towers.append(t)
 
-    clock = Mock()
     waves = MagicMock()
     g = Mock()
     g.add_obstacle.return_value = True
     waves.__len__.return_value = 2
-    gs = gamestate.GameState(clock)
+    gs = gamestate.GameState()
     gs.grid = g
     gs.towers = Mock()
     gs.towers.add.side_effect = towers_add_called
