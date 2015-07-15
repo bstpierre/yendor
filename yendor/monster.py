@@ -25,7 +25,7 @@ class Monster(pygame.sprite.Sprite):
         self._set_image(code)
         self.width = MONSTER_WIDTH
         self.height = MONSTER_HEIGHT
-        self.radius = self.width
+        self.radius = self.width / 2
         self.path = []
 
         self.velocity = velocity.Velocity(30, coord.SOUTH)  # XXX
