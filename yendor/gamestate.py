@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import pygame
+import pygame.gfxdraw
 
 from . import (
     coord,
@@ -69,6 +70,9 @@ class GameState:
     def _load_dungeon(self):
         if self.dungeon_level < 0:  # FIXME: handle game-over
             return
+
+        self.placing_tower = None
+        self.selected = None
 
         self.grid = grid.Grid(self)
         self.bullets.empty()
@@ -292,6 +296,14 @@ class GameState:
         self.add_monster(m)
         return m
 
+    def draw_tower_radius(self, screen, t):
+        if t.radius > 0:
+            RED = (200, 0, 0)
+            center = t.center
+            pygame.gfxdraw.circle(screen,
+                                  int(center.x), int(center.y),
+                                  int(t.radius), RED)
+
     def draw(self, screen):
         BLACK = (0, 0, 0)
 
@@ -305,16 +317,21 @@ class GameState:
             screen.blit(text, [text_x, text_y])
             text_y += 20
 
-        if self.selected is not None:
-            text = font.render(self.selected.status_message(self),
-                               True, BLACK)
-            text_y = 100
-            screen.blit(text, [text_x, text_y])
-
         self.grid.draw(screen)
         self.monsters.draw(screen)
         self.towers.draw(screen)
         self.bullets.draw(screen)
         self.placing_group.draw(screen)
+
+        if self.placing_tower is not None:
+            self.draw_tower_radius(screen, self.placing_tower)
+
+        if self.selected is not None:
+            text = font.render(self.selected.status_message(self),
+                               True, BLACK)
+            text_y = 100
+            screen.blit(text, [text_x, text_y])
+            if isinstance(self.selected, tower.Tower):
+                self.draw_tower_radius(screen, self.selected)
 
         self.ts.draw(screen)
