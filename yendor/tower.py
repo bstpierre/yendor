@@ -22,7 +22,6 @@ class Tower(pygame.sprite.Sprite):
         self.color = color
         self._set_image(code, color)
         self.rect = self.image.get_rect()
-        self.rate = 0.5  # seconds to reload
         self.last_fired = 0
         self.loaded = True
         self.bullet_factory = bullet_factory
@@ -88,6 +87,7 @@ class Slingshot(Tower):
 
     def __init__(self):
         self.radius = 60
+        self.rate = 0.5  # seconds to reload
         super().__init__(bullet_factory=bullet.Stone,
                          code='S1', color=BLUE)
 
@@ -106,6 +106,7 @@ class DartTower(Tower):
 
     def __init__(self):
         self.radius = 80
+        self.rate = 0.7  # seconds to reload
         super().__init__(bullet_factory=bullet.Dart,
                          code='D1', color=BLUE)
 
