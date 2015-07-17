@@ -41,7 +41,7 @@ def test_monster_update(fontinit):
     grid.client_coord_to_grid.side_effect = cc_to_gc
     grid.path.return_value = [start, start.south()]
 
-    m = monster.Dwarf(start, end, grid)
+    m = monster.Lizard(start, end, grid)
     g.add(m)
     assert m.alive()
     assert m.rect.x == start_cc.x
@@ -49,15 +49,15 @@ def test_monster_update(fontinit):
     assert m.velocity.direction == coord.SOUTH
     assert m.velocity.xVelocity < 1e-10
 
-    # 1s update, should move south 30px
-    # XXX - move hardcoded 30px/s velocity out of monster.py
-    m.update(1000)
+    # Update should move monster south by 30px.
+    ms_per_px = 1000.0 / m.speed
+    m.update(ms_per_px * 30)
     assert m.coord.x == start_cc.x
-    assert m.coord.y == start_cc.y + 30
+    assert abs(m.coord.y - (start_cc.y + m.speed)) < 0.0001
 
-    # Move the last 2px (1/15s) which will move to the base and the
-    # monster will no longer be active.
-    m.update(1/15.0 * 1000)
+    # Move the last 2px which will move to the base and the monster
+    # will no longer be active.
+    m.update(ms_per_px * 2)
     assert not m.alive()
 
 

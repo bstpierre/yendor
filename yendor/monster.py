@@ -28,7 +28,7 @@ class Monster(pygame.sprite.Sprite):
         self.radius = self.width / 2
         self.path = []
 
-        self.velocity = velocity.Velocity(30, coord.SOUTH)  # XXX
+        self.velocity = velocity.Velocity(self.speed, coord.SOUTH)
         self.grid = grid
         self.coord = self.grid.grid_coord_to_client(start)
         self.start = start
@@ -112,6 +112,7 @@ class Monster(pygame.sprite.Sprite):
 
 
 class Jackal(Monster):
+    speed = 30  # XXX
     level = 1
 
     def __init__(self, *args, **kwargs):
@@ -120,6 +121,7 @@ class Jackal(Monster):
 
 
 class Gnome(Monster):
+    speed = 15  # XXX
     level = 3
 
     def __init__(self, *args, **kwargs):
@@ -128,6 +130,7 @@ class Gnome(Monster):
 
 
 class Orc(Monster):
+    speed = 23  # XXX
     level = 3
 
     def __init__(self, *args, **kwargs):
@@ -136,6 +139,7 @@ class Orc(Monster):
 
 
 class Dwarf(Monster):
+    speed = 15  # XXX
     level = 4
 
     def __init__(self, *args, **kwargs):
@@ -144,6 +148,7 @@ class Dwarf(Monster):
 
 
 class Lizard(Monster):
+    speed = 30  # XXX
     level = 5
 
     def __init__(self, *args, **kwargs):
