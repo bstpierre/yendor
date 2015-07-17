@@ -15,6 +15,7 @@ class Dungeon:
         self.waves = waves
         self.spawn_origin = coord.Coord(0, 0)
         self.base = coord.Coord(0, 0)
+        self.walls = []
         self.cur_wave = 0
         self.active = True
 
@@ -46,7 +47,7 @@ class Dungeon:
                     self.active = False
 
     @staticmethod
-    def load(gs, filename):
+    def load(grid, filename):
         spec = open(filename, 'r').readlines()
         wave_spec = spec[0].strip()
         waves = [wave.Wave(*args) for args in
@@ -62,12 +63,12 @@ class Dungeon:
                 if ch == '.':
                     continue
                 elif ch == '#':
-                    cc = gs.grid.grid_coord_to_client(gc)
+                    cc = grid.grid_coord_to_client(gc)
                     wall = tower.Wall()
                     wall.rect.x = cc.x
                     wall.rect.y = cc.y
                     wall.cost = 0
-                    gs.add_tower(wall)
+                    d.walls.append(wall)
                 elif ch == '<':
                     d.spawn_origin = copy.copy(gc)
                 elif ch == '>':

@@ -83,11 +83,17 @@ class GameState:
 
         filename = 'levels/{}.dungeon'.format(self.dungeon_level)
         try:
-            self.dungeon = dungeon.Dungeon.load(self, filename)
+            self.dungeon = dungeon.Dungeon.load(self.grid, filename)
         except IOError:
             print("GAME OVER")
             self.dungeon_level = -1  # FIXME: handle game-over
             return
+
+        for wall in self.dungeon.walls:
+            ok = self.grid.add_obstacle(wall)
+            assert ok
+            self.towers.add(wall)
+            self.clickables.add(wall)
 
         # Give player at least 20 + (10*dlevel)
         self.money = max(self.money, 20)
