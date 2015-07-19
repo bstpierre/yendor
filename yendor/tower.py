@@ -87,7 +87,7 @@ class Slingshot(Tower):
 
     def __init__(self):
         self.radius = 60
-        self.rate = 0.5  # seconds to reload
+        self.rate = 0.7  # seconds to reload
         super().__init__(bullet_factory=bullet.Stone,
                          code='S1', color=BLUE)
 
@@ -106,7 +106,7 @@ class DartTower(Tower):
 
     def __init__(self):
         self.radius = 80
-        self.rate = 0.7  # seconds to reload
+        self.rate = 1.0  # seconds to reload
         super().__init__(bullet_factory=bullet.Dart,
                          code='D1', color=BLUE)
 

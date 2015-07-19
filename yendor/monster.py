@@ -17,7 +17,8 @@ class Monster(pygame.sprite.Sprite):
         super().__init__()
 
         # Nethack monster HP == (monster level)d8
-        self.health = dice.roll(self.level, 8)
+        # Tweaking it a bit here.
+        self.health = dice.roll(self.level + 1, 8)
 
         # Nethack XP == (ML)*(ML+6)+1
         self.xp = self.level * (self.level + 6) + 1
@@ -148,12 +149,21 @@ class Dwarf(Monster):
 
 
 class Lizard(Monster):
-    speed = 30  # XXX
+    speed = 15  # XXX
     level = 5
 
     def __init__(self, *args, **kwargs):
         self.damage = 6
         super().__init__(*args, code=':', **kwargs)
+
+
+class Yeti(Monster):
+    speed = 38  # XXX
+    level = 7
+
+    def __init__(self, *args, **kwargs):
+        self.damage = 12
+        super().__init__(*args, code='Y', **kwargs)
 
 
 monsters = {n: g for (n, g) in globals().items() if (

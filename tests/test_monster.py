@@ -50,10 +50,11 @@ def test_monster_update(fontinit):
     assert m.velocity.xVelocity < 1e-10
 
     # Update should move monster south by 30px.
+    expected_y = 30
     ms_per_px = 1000.0 / m.speed
-    m.update(ms_per_px * 30)
+    m.update(ms_per_px * expected_y)
     assert m.coord.x == start_cc.x
-    assert abs(m.coord.y - (start_cc.y + m.speed)) < 0.0001
+    assert abs(m.coord.y - (start_cc.y + expected_y)) < 0.0001
 
     # Move the last 2px which will move to the base and the monster
     # will no longer be active.
