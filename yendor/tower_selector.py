@@ -5,6 +5,9 @@ import pygame
 from . import (
     grid,
     )
+from . gui import (
+    button,
+    )
 
 
 class TowerSelector:
@@ -15,42 +18,37 @@ class TowerSelector:
         self.available = towers
         self.towers = []
         self.selected_tower = None
+        self.buttons = pygame.sprite.Group()
+        self.set_available(towers)
 
     def set_available(self, towers):
         self.available = towers
+
         if self.selected_tower not in towers:
-            print("selected_tower {}, towers {}".format(
-                self.selected_tower, towers))
             self.selected_tower = None
+
+        # Start at y-offset to give room for title.
+        btn_x = self.rect.x
+        btn_y = self.rect.y + 20
+
+        self.buttons.empty()
+        for tclass in towers:
+            # FIXME: generate Menu instead of Buttons
+            btn = button.Button(btn_x, btn_y, self.rect.width, 20,
+                                tclass.name, self.handle_button_click,
+                                tclass)
+            self.buttons.add(btn)
+            btn_y += 20
+
+        assert btn_y < (self.rect.x + self.rect.height)
 
     def draw(self, screen):
         BLACK = (0, 0, 0)
         font = pygame.font.Font(None, 18)
-
-        text_x = self.rect.x
-        text_y = self.rect.y
-
         text = font.render("TOWERS", True, BLACK)
-        screen.blit(text, [text_x, text_y])
-        text_y += 20
+        screen.blit(text, [self.rect.x, self.rect.y])
 
-        text_x += 10
-        self.towers = []
-        for tclass in self.available:
-            name = tclass.name
-            text = font.render(name, True, BLACK)
-            r = text.get_rect()
-            r.x += self.rect.x
-            r.y += text_y
-            r.width = self.rect.width
-            self.towers.append((r, tclass))
-            screen.blit(text, [text_x, text_y])
-            text_y += 20
+        self.buttons.draw(screen)
 
-        assert text_y < (self.rect.x + self.rect.height)
-
-    def handle_click(self, event):
-        for r, t in self.towers:
-            if r.collidepoint(event.pos[0], event.pos[1]):
-                self.selected_tower = t
-                break
+    def handle_button_click(self, btn, tclass):
+        self.selected_tower = tclass

@@ -14,6 +14,10 @@ from . import (
     tower_selector,
     )
 
+from . gui import (
+    button,
+    )
+
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
@@ -117,6 +121,8 @@ class GameState:
 
     def handle_events(self):
         for event in pygame.event.get():
+            if button.Button.handle_event(event):
+                continue
             if event.type == pygame.QUIT:
                 self.running = False
             elif event.type == pygame.KEYDOWN:
@@ -183,10 +189,7 @@ class GameState:
                         self.placing_tower.kill()
                         self.placing_tower = None
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if self.ts.rect.collidepoint(event.pos[0],
-                                             event.pos[1]):
-                    self.ts.handle_click(event)
-                elif self.placing_tower is not None:
+                if self.placing_tower is not None:
                     self.add_tower(self.placing_tower)
                     self.placing_group.empty()
                     self.placing_tower = None
